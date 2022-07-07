@@ -1,5 +1,7 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
+import 'package:terafty_flutter/screens/auth/login_email_screen.dart';
 
 class LoginMainScreen extends StatelessWidget {
   static const String routeName = '/login';
@@ -26,51 +28,87 @@ class LoginMainScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const SizedBox(height: 40),
+            const SizedBox(height: 30),
             Image.asset(
               'assets/images/Terafty.png',
               scale: 1.5,
             ),
-            const SizedBox(height: 60),
+            const SizedBox(height: 120),
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  '로그인하고 더 많은 서비스를 이용하세요.',
-                  style: Theme.of(context).textTheme.headline5!.copyWith(
-                        color: Colors.white,
-                      ),
-                ),
-                const SizedBox(height: 22),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, LoginMainScreen.routeName);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(width * 0.9, 60),
-                  ),
-                  child: Text(
-                    '로그인하기',
-                    style: Theme.of(context).textTheme.headline4!.copyWith(
-                          color: Colors.white,
-                        ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size(width * 0.9, 60),
-                    primary: Colors.transparent,
-                    side: const BorderSide(width: 1, color: Colors.white),
+                    primary: Colors.white,
                   ),
-                  child: Text(
-                    '로그인하기',
+                  icon: const Icon(
+                    EvaIcons.google,
+                    color: Colors.black,
+                  ),
+                  label: Text(
+                    'Google로 계속하기',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(width * 0.9, 60),
+                    primary: HexColor.fromHex('#FFCA42'),
+                  ),
+                  icon: const Icon(
+                    EvaIcons.messageCircle,
+                    color: Colors.black,
+                  ),
+                  label: Text(
+                    '카카오로 계속하기',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, LoginEmailScreen.routeName);
+                  },
+                  icon: const Icon(Icons.mail),
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(width * 0.9, 60),
+                    primary: HexColor.fromHex('#5A5A5A'),
+                  ),
+                  label: Text(
+                    '이메일로 로그인하기',
                     style: Theme.of(context).textTheme.headline4!.copyWith(
                           color: Colors.white,
                         ),
                   ),
-                )
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '아이디가 없나요?',
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                    const SizedBox(width: 5),
+                    InkWell(
+                      onTap: () {},
+                      child: Text(
+                        '회원가입하세요.',
+                        style: Theme.of(context).textTheme.headline6!.copyWith(
+                              color: Colors.white,
+                              decoration: TextDecoration.underline,
+                            ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
               ],
             )
           ],

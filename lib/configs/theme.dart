@@ -4,7 +4,7 @@ import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
 ThemeData theme() {
   return ThemeData(
     visualDensity: VisualDensity.adaptivePlatformDensity,
-    primaryColor: HexColor.fromHex('#1C1D1E'),
+    primaryColor: HexColor.fromHex('#131A20'),
     primaryColorDark: HexColor.fromHex('#fdff73'),
     primaryColorLight: HexColor.fromHex('#ffc519'),
     scaffoldBackgroundColor: HexColor.fromHex('#1C1D1E'),

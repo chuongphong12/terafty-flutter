@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:terafty_flutter/screens/auth/login_email_screen.dart';
 import 'package:terafty_flutter/screens/auth/login_main_screen.dart';
 import 'package:terafty_flutter/screens/boarding/boarding_screen.dart';
 import 'package:terafty_flutter/screens/home/home_screen.dart';
@@ -10,6 +11,8 @@ class AppRouter {
         return BoardingScreen.route();
       case LoginMainScreen.routeName:
         return LoginMainScreen.route();
+      case LoginEmailScreen.routeName:
+        return LoginEmailScreen.route();
       case HomeScreen.routeName:
         return HomeScreen.route();
       default:
