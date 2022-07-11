@@ -22,8 +22,8 @@ class LoginMainScreen extends StatelessWidget {
       appBar: AppBar(),
       body: Container(
         constraints: const BoxConstraints.expand(),
-        decoration: BoxDecoration(
-          color: HexColor.fromHex('#1C1D1E'),
+        decoration: const BoxDecoration(
+          color: Color(0xFF131A20),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

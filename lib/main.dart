@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:terafty_flutter/bloc/auth/auth_bloc.dart';
+import 'package:terafty_flutter/bloc/login/login_bloc.dart';
 import 'package:terafty_flutter/configs/app_router.dart';
 import 'package:terafty_flutter/configs/theme.dart';
+import 'package:terafty_flutter/repository/auth_repository.dart';
+import 'package:terafty_flutter/screens/auth/login_main_screen.dart';
 import 'package:terafty_flutter/screens/home/home_screen.dart';
+import 'package:terafty_flutter/services/storage_service.dart';
 import 'package:terafty_flutter/simple_bloc_observer.dart';
 
 void main() {
@@ -21,12 +26,52 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Terafty Flutter',
-      theme: theme(),
-      initialRoute: '/',
-      onGenerateRoute: AppRouter.onGenerateRoute,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => AuthRepositories(),
+        )
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AuthBloc(
+              authRepositories: context.read<AuthRepositories>(),
+              storageService: StorageService(),
+            )..add(AppStarted()),
+          ),
+          BlocProvider(
+            create: (context) => LoginBloc(
+              authRepositories: context.read<AuthRepositories>(),
+              authBloc: context.read<AuthBloc>(),
+            ),
+          )
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Terafty Flutter',
+          theme: theme(),
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          home: BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is AuthAuthenticated) {
+                return const HomeScreen();
+              }
+              if (state is AuthUnAuthenticated) {
+                return const LoginMainScreen();
+              }
+              if (state is AuthLoading) {
+                return const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                );
+              }
+              return const Center(
+                child: CircularProgressIndicator.adaptive(),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

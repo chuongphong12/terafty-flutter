@@ -27,6 +27,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(
               child: Column(
@@ -48,7 +49,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                         ),
                   ),
                   const SizedBox(height: 12),
-                  const LoginForm(),
+                  LoginForm(),
                 ],
               ),
             ),

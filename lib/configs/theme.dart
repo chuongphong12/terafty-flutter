@@ -7,7 +7,7 @@ ThemeData theme() {
     primaryColor: HexColor.fromHex('#131A20'),
     primaryColorDark: HexColor.fromHex('#fdff73'),
     primaryColorLight: HexColor.fromHex('#ffc519'),
-    scaffoldBackgroundColor: HexColor.fromHex('#1C1D1E'),
+    scaffoldBackgroundColor: const Color(0xFF131A20),
     fontFamily: 'NotoSansKR',
     textTheme: const TextTheme(
       headline1: TextStyle(
@@ -51,8 +51,8 @@ ThemeData theme() {
         fontWeight: FontWeight.normal,
       ),
     ),
-    appBarTheme: AppBarTheme(
-      color: HexColor.fromHex('#1C1D1E'),
+    appBarTheme: const AppBarTheme(
+      color: Color(0xFF131A20),
       elevation: 0,
     ),
     colorScheme: ColorScheme(

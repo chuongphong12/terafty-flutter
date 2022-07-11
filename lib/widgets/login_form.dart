@@ -1,19 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:terafty_flutter/bloc/login/login_bloc.dart';
 import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
 import 'package:terafty_flutter/screens/home/home_screen.dart';
 
 class LoginForm extends StatelessWidget {
-  const LoginForm({
+  LoginForm({
     Key? key,
   }) : super(key: key);
 
+  final formKey = GlobalKey<FormBuilderState>();
+
   @override
   Widget build(BuildContext context) {
-    final GlobalKey formKey = GlobalKey<FormBuilderState>();
+    void _onButtonPressed() async {
+      formKey.currentState!.save();
+      if (formKey.currentState!.validate()) {
+        final data = formKey.currentState!.value;
+        BlocProvider.of<LoginBloc>(context).add(
+          LoginButtonPressed(
+            email: data['email'],
+            password: data['password'],
+          ),
+        );
+      }
+    }
+
     return FormBuilder(
       key: formKey,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           FormBuilderTextField(
             name: 'email',
