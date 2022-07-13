@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:terafty_flutter/bloc/auth/auth_bloc.dart';
 import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -73,6 +75,12 @@ class AppDrawer extends StatelessWidget {
                 ),
               ),
               itemCount: items.length,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                BlocProvider.of<AuthBloc>(context).add(LoggedOut());
+              },
+              child: const Text('Logout'),
             )
           ],
         ),

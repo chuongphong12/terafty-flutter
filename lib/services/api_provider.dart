@@ -11,10 +11,13 @@ class Api {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
+          accessToken = await _storage.readSecureData('access_token');
           if (!options.path.contains('http')) {
             options.path = 'http://3.39.229.249:3000/${options.path}';
           }
-          options.headers['Authorization'] = 'Bearer $accessToken';
+          if (accessToken != null && accessToken != '') {
+            options.headers['Authorization'] = 'Bearer $accessToken';
+          }
           return handler.next(options);
         },
         onError: (DioError error, handler) {

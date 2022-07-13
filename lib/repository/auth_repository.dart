@@ -1,17 +1,22 @@
 import 'package:dio/dio.dart';
 import 'package:terafty_flutter/constants/api_constant.dart';
+import 'package:terafty_flutter/models/user_model.dart';
 
 class AuthRepositories {
   final Dio _dio = Dio();
 
   Future<String> login(String email, String password) async {
+    User? user;
     try {
-      Response response = await _dio.post('$baseURL/customer/login', data: {
-        'email': email,
-        'password': password,
+      Response response = await _dio.post('$baseURL/user/login', data: {
+        'userEmail': email,
+        'userPassword': password,
+        'language': 'english',
+        'typeDevice': 'app'
       });
+      user = User.fromJson(response.data);
       if (response.statusCode == 200) {
-        return response.data['data']['access_token'];
+        return user.data.token;
       } else {
         throw Exception('Failed to login');
       }
