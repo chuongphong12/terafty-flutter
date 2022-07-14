@@ -3,6 +3,7 @@ import 'package:terafty_flutter/screens/auth/login_email_screen.dart';
 import 'package:terafty_flutter/screens/auth/login_main_screen.dart';
 import 'package:terafty_flutter/screens/boarding/boarding_screen.dart';
 import 'package:terafty_flutter/screens/home/home_screen.dart';
+import 'package:terafty_flutter/screens/movie/movie_detail_screen.dart';
 
 class AppRouter {
   static Route onGenerateRoute(RouteSettings settings) {
@@ -15,6 +16,8 @@ class AppRouter {
         return LoginEmailScreen.route();
       case HomeScreen.routeName:
         return HomeScreen.route();
+      case MovieDetailScreen.routeName:
+        return MovieDetailScreen.route();
       default:
         return _errorRoute();
     }

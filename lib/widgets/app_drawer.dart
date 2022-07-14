@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terafty_flutter/bloc/auth/auth_bloc.dart';
 import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
+import 'package:terafty_flutter/screens/auth/login_main_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -35,8 +36,7 @@ class AppDrawer extends StatelessWidget {
               children: [
                 const CircleAvatar(
                   backgroundColor: Colors.white,
-                  backgroundImage:
-                      NetworkImage('https://robohash.org/ttn?set=set4'),
+                  backgroundImage: NetworkImage('https://robohash.org/ttn?set=set4'),
                   radius: 35,
                 ),
                 const SizedBox(width: 12),
@@ -45,10 +45,7 @@ class AppDrawer extends StatelessWidget {
                   children: [
                     Text(
                       '로그인이 필요합니다.',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline4!
-                          .copyWith(color: Colors.white),
+                      style: Theme.of(context).textTheme.headline4,
                     ),
                     Text(
                       '로그인이 필요합니다.',
@@ -68,10 +65,7 @@ class AppDrawer extends StatelessWidget {
               itemBuilder: (context, index) => ListTile(
                 title: Text(
                   items[index],
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline4!
-                      .copyWith(color: Colors.white),
+                  style: Theme.of(context).textTheme.headline4,
                 ),
               ),
               itemCount: items.length,
@@ -79,6 +73,8 @@ class AppDrawer extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 BlocProvider.of<AuthBloc>(context).add(LoggedOut());
+                Navigator.pushNamedAndRemoveUntil(
+                    context, LoginMainScreen.routeName, (route) => false);
               },
               child: const Text('Logout'),
             )

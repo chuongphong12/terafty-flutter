@@ -80,9 +80,7 @@ class LoginMainScreen extends StatelessWidget {
                   ),
                   label: Text(
                     '이메일로 로그인하기',
-                    style: Theme.of(context).textTheme.headline4!.copyWith(
-                          color: Colors.white,
-                        ),
+                    style: Theme.of(context).textTheme.headline4,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -91,9 +89,7 @@ class LoginMainScreen extends StatelessWidget {
                   children: [
                     Text(
                       '아이디가 없나요?',
-                      style: Theme.of(context).textTheme.headline6!.copyWith(
-                            color: Colors.white,
-                          ),
+                      style: Theme.of(context).textTheme.headline6,
                     ),
                     const SizedBox(width: 5),
                     InkWell(
@@ -101,7 +97,6 @@ class LoginMainScreen extends StatelessWidget {
                       child: Text(
                         '회원가입하세요.',
                         style: Theme.of(context).textTheme.headline6!.copyWith(
-                              color: Colors.white,
                               decoration: TextDecoration.underline,
                             ),
                       ),

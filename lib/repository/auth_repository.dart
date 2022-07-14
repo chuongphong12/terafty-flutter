@@ -14,7 +14,7 @@ class AuthRepositories {
         'language': 'english',
         'typeDevice': 'app'
       });
-      user = User.fromJson(response.data);
+      User user = User.fromJson(response.data);
       if (response.statusCode == 200) {
         return user.data.token;
       } else {

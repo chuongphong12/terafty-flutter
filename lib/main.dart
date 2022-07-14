@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terafty_flutter/bloc/auth/auth_bloc.dart';
 import 'package:terafty_flutter/bloc/login/login_bloc.dart';
+import 'package:terafty_flutter/bloc/popular/popular_bloc.dart';
 import 'package:terafty_flutter/configs/app_router.dart';
 import 'package:terafty_flutter/configs/theme.dart';
 import 'package:terafty_flutter/repository/auth_repository.dart';
+import 'package:terafty_flutter/repository/popular_repository.dart';
 import 'package:terafty_flutter/screens/auth/login_main_screen.dart';
 import 'package:terafty_flutter/screens/home/home_screen.dart';
 import 'package:terafty_flutter/services/storage_service.dart';
@@ -30,7 +32,10 @@ class MyApp extends StatelessWidget {
       providers: [
         RepositoryProvider(
           create: (context) => AuthRepositories(),
-        )
+        ),
+        RepositoryProvider(
+          create: (context) => PopularRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -44,6 +49,11 @@ class MyApp extends StatelessWidget {
             create: (context) => LoginBloc(
               authRepositories: context.read<AuthRepositories>(),
               authBloc: context.read<AuthBloc>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => PopularBloc(
+              popularRepository: context.read<PopularRepository>(),
             ),
           )
         ],

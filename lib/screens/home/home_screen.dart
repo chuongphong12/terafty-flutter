@@ -1,7 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:terafty_flutter/bloc/popular/popular_bloc.dart';
+import 'package:terafty_flutter/screens/movie/movie_detail_screen.dart';
 import 'package:terafty_flutter/widgets/app_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,6 +27,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int activeIndex = 0;
+
+  @override
+  void initState() {
+    BlocProvider.of<PopularBloc>(context).add(LoadPopularContent());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,31 +121,22 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Text(
                                   '우리들의 행복한 시간',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline1!
-                                      .copyWith(
-                                        color: Colors.white,
-                                        fontSize: 32
-                                      ),
+                                  style:
+                                      Theme.of(context).textTheme.headline1!.copyWith(fontSize: 32),
                                 ),
                                 Text(
                                   '‘지금 이순간이 좋아’',
                                   style: Theme.of(context)
                                       .textTheme
                                       .headline4!
-                                      .copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w400),
+                                      .copyWith(fontWeight: FontWeight.w400),
                                 ),
                                 Text(
                                   '일상에 생기를 불어 넣어 주는 영화',
                                   style: Theme.of(context)
                                       .textTheme
                                       .headline4!
-                                      .copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w400),
+                                      .copyWith(fontWeight: FontWeight.w400),
                                 ),
                               ],
                             ),
@@ -154,8 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     enlargeCenterPage: false,
                     scrollDirection: Axis.horizontal,
                     clipBehavior: Clip.hardEdge,
-                    onPageChanged:
-                        (int index, CarouselPageChangedReason reason) {
+                    onPageChanged: (int index, CarouselPageChangedReason reason) {
                       setState(() {
                         activeIndex = index;
                       });
@@ -179,52 +179,85 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     'Popular',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3!
-                        .copyWith(color: Colors.white),
+                    style: Theme.of(context).textTheme.headline3,
                   ),
                 ),
                 const SizedBox(height: 20),
-                GridView.count(
-                  crossAxisCount: 3,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  childAspectRatio: (10 / 16.5),
-                  children: List.generate(
-                    14,
-                    (index) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        InkWell(
-                          borderRadius: BorderRadius.circular(8),
-                          onTap: () {},
-                          child: Image.asset(
-                            'assets/images/rectangle-13.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          '브라더',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline4!
-                              .copyWith(color: Colors.white),
-                        )
-                      ],
-                    ),
-                  ).toList(),
-                ),
+                const PopularGrid(),
               ],
             ),
           ].reversed.toList(),
         ),
       ),
       drawer: const AppDrawer(),
+    );
+  }
+}
+
+class PopularGrid extends StatelessWidget {
+  const PopularGrid({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<PopularBloc, PopularState>(
+      builder: (context, state) {
+        if (state is PopularLoading) {
+          return const Center(
+            child: CircularProgressIndicator.adaptive(),
+          );
+        }
+        if (state is PopularLoaded) {
+          final content = state.popular;
+          return GridView.count(
+            crossAxisCount: 3,
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            crossAxisSpacing: 10,
+            childAspectRatio: (9 / 18),
+            children: List.generate(
+              content.length,
+              (index) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () {
+                      Navigator.pushNamed(context, MovieDetailScreen.routeName);
+                    },
+                    child: CachedNetworkImage(
+                      imageUrl: content[index].imageWebDomestic,
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                      height: 150,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    content[index].titleKr,
+                    style: Theme.of(context).textTheme.headline4,
+                  )
+                ],
+              ),
+            ).toList(),
+          );
+        } else {
+          return Center(
+            child: Text(
+              'Something went wrong!!',
+              style: Theme.of(context).textTheme.headline5,
+            ),
+          );
+        }
+      },
     );
   }
 }

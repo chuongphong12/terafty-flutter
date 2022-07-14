@@ -36,15 +36,12 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                   const SizedBox(height: 80),
                   Text(
                     '로그인',
-                    style: Theme.of(context).textTheme.headline1!.copyWith(
-                          color: Colors.white,
-                        ),
+                    style: Theme.of(context).textTheme.headline1,
                   ),
                   const SizedBox(height: 12),
                   Text(
                     '이메일과 비밀번호를 입력해주세요.',
                     style: Theme.of(context).textTheme.headline4!.copyWith(
-                          color: Colors.white,
                           fontWeight: FontWeight.normal,
                         ),
                   ),
@@ -61,7 +58,6 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                   Text(
                     '비밀번호 찾기',
                     style: Theme.of(context).textTheme.headline6!.copyWith(
-                          color: Colors.white,
                           decoration: TextDecoration.underline,
                         ),
                   ),
@@ -71,15 +67,12 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                     children: [
                       Text(
                         '아이디가 없나요?',
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                              color: Colors.white,
-                            ),
+                        style: Theme.of(context).textTheme.headline6,
                       ),
                       const SizedBox(width: 5),
                       Text(
                         '회원가입하세요.',
                         style: Theme.of(context).textTheme.headline6!.copyWith(
-                              color: Colors.white,
                               decoration: TextDecoration.underline,
                             ),
                       ),

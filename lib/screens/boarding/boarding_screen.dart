@@ -57,9 +57,7 @@ class BoardingScreen extends StatelessWidget {
                   children: [
                     Text(
                       '로그인하고 더 많은 서비스를 이용하세요.',
-                      style: Theme.of(context).textTheme.headline5!.copyWith(
-                            color: Colors.white,
-                          ),
+                      style: Theme.of(context).textTheme.headline5,
                     ),
                     const SizedBox(height: 22),
                     ElevatedButton(
@@ -71,9 +69,7 @@ class BoardingScreen extends StatelessWidget {
                       ),
                       child: Text(
                         '로그인하기',
-                        style: Theme.of(context).textTheme.headline4!.copyWith(
-                              color: Colors.white,
-                            ),
+                        style: Theme.of(context).textTheme.headline4,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -86,9 +82,7 @@ class BoardingScreen extends StatelessWidget {
                       ),
                       child: Text(
                         '로그인하기',
-                        style: Theme.of(context).textTheme.headline4!.copyWith(
-                              color: Colors.white,
-                            ),
+                        style: Theme.of(context).textTheme.headline4,
                       ),
                     )
                   ],
