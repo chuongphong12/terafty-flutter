@@ -7,11 +7,11 @@ class PopularRepository {
   final _api = Api();
 
   Future<List<Doc>> getPopularContent() async {
-    List<Doc>? popular;
+    List<Doc> popular;
     try {
-      Response response = await _api.dio.get('$baseURL/web-app/popular-content');
+      Response response =
+          await _api.dio.get('$baseURL/web-app/popular-content');
       PopularContent movieRes = PopularContent.fromJson(response.data);
-
       popular = movieRes.data.docs;
       return popular;
     } on DioError catch (e) {

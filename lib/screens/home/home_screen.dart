@@ -121,8 +121,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Text(
                                   '우리들의 행복한 시간',
-                                  style:
-                                      Theme.of(context).textTheme.headline1!.copyWith(fontSize: 32),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline1!
+                                      .copyWith(fontSize: 32),
                                 ),
                                 Text(
                                   '‘지금 이순간이 좋아’',
@@ -155,7 +157,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     enlargeCenterPage: false,
                     scrollDirection: Axis.horizontal,
                     clipBehavior: Clip.hardEdge,
-                    onPageChanged: (int index, CarouselPageChangedReason reason) {
+                    onPageChanged:
+                        (int index, CarouselPageChangedReason reason) {
                       setState(() {
                         activeIndex = index;
                       });
@@ -230,11 +233,16 @@ class PopularGrid extends StatelessWidget {
                       Navigator.pushNamed(context, MovieDetailScreen.routeName);
                     },
                     child: CachedNetworkImage(
-                      imageUrl: content[index].imageWebDomestic,
+                      imageUrl: content[index].imageMobileDomestic,
                       placeholder: (context, url) => const Center(
                         child: CircularProgressIndicator(),
                       ),
-                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      errorWidget: (context, url, error) => const Center(
+                        child: Icon(
+                          Icons.error,
+                          color: Colors.red,
+                        ),
+                      ),
                       fit: BoxFit.cover,
                       alignment: Alignment.center,
                       height: 150,

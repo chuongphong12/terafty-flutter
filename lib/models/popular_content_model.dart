@@ -4,7 +4,8 @@
 
 import 'dart:convert';
 
-PopularContent popularContentFromJson(String str) => PopularContent.fromJson(json.decode(str));
+PopularContent popularContentFromJson(String str) =>
+    PopularContent.fromJson(json.decode(str));
 
 String popularContentToJson(PopularContent data) => json.encode(data.toJson());
 
@@ -123,7 +124,8 @@ class Data {
 class Doc {
   Doc({
     required this.id,
-    required this.streamingId,
+    this.streamingId,
+    this.crowdfundingId,
     required this.v,
     required this.createdAt,
     required this.createdBy,
@@ -139,7 +141,8 @@ class Doc {
   });
 
   final String id;
-  final String streamingId;
+  final String? streamingId;
+  final CrowdfundingId? crowdfundingId;
   final int v;
   final DateTime createdAt;
   final String createdBy;
@@ -155,7 +158,8 @@ class Doc {
 
   Doc copyWith({
     required String id,
-    required String streamingId,
+    String? streamingId,
+    CrowdfundingId? crowdfundingId,
     required int v,
     required DateTime createdAt,
     required String createdBy,
@@ -171,7 +175,8 @@ class Doc {
   }) =>
       Doc(
         id: id,
-        streamingId: streamingId,
+        streamingId: streamingId ?? this.streamingId,
+        crowdfundingId: crowdfundingId ?? this.crowdfundingId,
         v: v,
         createdAt: createdAt,
         createdBy: createdBy,
@@ -189,6 +194,9 @@ class Doc {
   factory Doc.fromJson(Map<String, dynamic> json) => Doc(
         id: json["_id"],
         streamingId: json["streamingID"],
+        crowdfundingId: json["crowdfundingID"] == null
+            ? null
+            : CrowdfundingId.fromJson(json["crowdfundingID"]),
         v: json["__v"],
         createdAt: DateTime.parse(json["createdAt"]),
         createdBy: json["createdBy"],
@@ -206,6 +214,7 @@ class Doc {
   Map<String, dynamic> toJson() => {
         "_id": id,
         "streamingID": streamingId,
+        "crowdfundingID": crowdfundingId?.toJson(),
         "__v": v,
         "createdAt": createdAt.toIso8601String(),
         "createdBy": createdBy,
@@ -218,5 +227,40 @@ class Doc {
         "title_kr": titleKr,
         "type": type,
         "updatedAt": updatedAt.toIso8601String(),
+      };
+}
+
+class CrowdfundingId {
+  CrowdfundingId({
+    required this.id,
+    required this.amount,
+    required this.url,
+  });
+
+  final String id;
+  final int amount;
+  final String url;
+
+  CrowdfundingId copyWith({
+    required String id,
+    required int amount,
+    required String url,
+  }) =>
+      CrowdfundingId(
+        id: id,
+        amount: amount,
+        url: url,
+      );
+
+  factory CrowdfundingId.fromJson(Map<String, dynamic> json) => CrowdfundingId(
+        id: json["_id"],
+        amount: json["amount"],
+        url: json["url"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "_id": id,
+        "amount": amount,
+        "url": url,
       };
 }
