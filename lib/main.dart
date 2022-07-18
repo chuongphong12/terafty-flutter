@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terafty_flutter/bloc/auth/auth_bloc.dart';
 import 'package:terafty_flutter/bloc/login/login_bloc.dart';
 import 'package:terafty_flutter/bloc/popular/popular_bloc.dart';
+import 'package:terafty_flutter/bloc/streaming/streaming_bloc.dart';
 import 'package:terafty_flutter/configs/app_router.dart';
 import 'package:terafty_flutter/configs/theme.dart';
 import 'package:terafty_flutter/repository/auth_repository.dart';
 import 'package:terafty_flutter/repository/popular_repository.dart';
+import 'package:terafty_flutter/repository/streaming_repository.dart';
 import 'package:terafty_flutter/screens/auth/login_main_screen.dart';
 import 'package:terafty_flutter/screens/home/home_screen.dart';
 import 'package:terafty_flutter/services/storage_service.dart';
@@ -36,6 +38,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(
           create: (context) => PopularRepository(),
         ),
+        RepositoryProvider(
+          create: (context) => StreamingRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -54,6 +59,11 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => PopularBloc(
               popularRepository: context.read<PopularRepository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => StreamingBloc(
+              streamingRepository: context.read<StreamingRepository>(),
             ),
           )
         ],

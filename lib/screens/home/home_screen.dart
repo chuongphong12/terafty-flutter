@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:terafty_flutter/bloc/popular/popular_bloc.dart';
+import 'package:terafty_flutter/bloc/streaming/streaming_bloc.dart';
 import 'package:terafty_flutter/screens/movie/movie_detail_screen.dart';
 import 'package:terafty_flutter/widgets/app_drawer.dart';
 
@@ -121,10 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Text(
                                   '우리들의 행복한 시간',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline1!
-                                      .copyWith(fontSize: 32),
+                                  style:
+                                      Theme.of(context).textTheme.headline1!.copyWith(fontSize: 32),
                                 ),
                                 Text(
                                   '‘지금 이순간이 좋아’',
@@ -157,8 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     enlargeCenterPage: false,
                     scrollDirection: Axis.horizontal,
                     clipBehavior: Clip.hardEdge,
-                    onPageChanged:
-                        (int index, CarouselPageChangedReason reason) {
+                    onPageChanged: (int index, CarouselPageChangedReason reason) {
                       setState(() {
                         activeIndex = index;
                       });
@@ -230,6 +228,8 @@ class PopularGrid extends StatelessWidget {
                   InkWell(
                     borderRadius: BorderRadius.circular(8),
                     onTap: () {
+                      BlocProvider.of<StreamingBloc>(context).add(LoadSteamingDetail(
+                          id: content[index].streamingId ?? content[index].crowdfundingId!.id));
                       Navigator.pushNamed(context, MovieDetailScreen.routeName);
                     },
                     child: CachedNetworkImage(
