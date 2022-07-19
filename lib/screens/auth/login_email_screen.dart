@@ -26,30 +26,29 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: ListView(
+          physics: const NeverScrollableScrollPhysics(),
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 80),
-                  Text(
-                    '로그인',
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '이메일과 비밀번호를 입력해주세요.',
-                    style: Theme.of(context).textTheme.headline4!.copyWith(
-                          fontWeight: FontWeight.normal,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
-                  LoginForm(),
-                ],
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 80),
+                Text(
+                  '로그인',
+                  style: Theme.of(context).textTheme.headline1,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '이메일과 비밀번호를 입력해주세요.',
+                  style: Theme.of(context).textTheme.headline4!.copyWith(
+                        fontWeight: FontWeight.normal,
+                      ),
+                ),
+                const SizedBox(height: 12),
+                LoginForm(),
+              ],
             ),
+            const SizedBox(height: 220),
             Align(
               alignment: Alignment.bottomCenter,
               child: Column(

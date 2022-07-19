@@ -13,13 +13,14 @@ class PopularLoading extends PopularState {}
 
 class PopularLoaded extends PopularState {
   final List<Doc> popular;
-
+  final List<dynamic> banners;
   const PopularLoaded({
+    required this.banners,
     required this.popular,
   });
 
   @override
-  List<Object> get props => [popular];
+  List<Object> get props => [popular, banners];
 }
 
 class PopularFailure extends PopularState {

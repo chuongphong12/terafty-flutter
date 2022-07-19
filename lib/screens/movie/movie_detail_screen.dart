@@ -20,7 +20,8 @@ class MovieDetailScreen extends StatefulWidget {
   State<MovieDetailScreen> createState() => _MovieDetailScreenState();
 }
 
-class _MovieDetailScreenState extends State<MovieDetailScreen> with SingleTickerProviderStateMixin {
+class _MovieDetailScreenState extends State<MovieDetailScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int selectedTab = 0;
   @override
@@ -120,20 +121,26 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> with SingleTicker
                               children: [
                                 Text(
                                   streaming.categoryGenre.nameKr,
-                                  style:
-                                      Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .copyWith(fontSize: 12),
                                 ),
                                 _verticalLine(),
                                 Text(
                                   '시즌 ${streaming.quantitySeason}개',
-                                  style:
-                                      Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .copyWith(fontSize: 12),
                                 ),
                                 _verticalLine(),
                                 Text(
                                   '에피소드 ${streaming.quantityEpisodes}개',
-                                  style:
-                                      Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .copyWith(fontSize: 12),
                                 ),
                               ],
                             ),
@@ -358,37 +365,7 @@ class Tab3 extends StatelessWidget {
               .headline6!
               .copyWith(fontSize: 12, color: const Color(0xFF888F95)),
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 2,
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          itemBuilder: (context, index) => Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            child: ListTile(
-              leading: Image.asset('assets/images/product.png', fit: BoxFit.cover),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: const BorderSide(
-                  color: Color(0xFF2A343D),
-                ),
-              ),
-              title: Text(
-                'A. 버버리 포이베 파우치',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              minVerticalPadding: 30,
-              minLeadingWidth: 80,
-              trailing: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.check_circle_outline_outlined,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
+        const ProductListView(),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -420,6 +397,47 @@ class Tab3 extends StatelessWidget {
   }
 }
 
+class ProductListView extends StatelessWidget {
+  const ProductListView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 2,
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      itemBuilder: (context, index) => Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        child: ListTile(
+          leading: Image.asset('assets/images/product.png', fit: BoxFit.cover),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: const BorderSide(
+              color: Color(0xFF2A343D),
+            ),
+          ),
+          title: Text(
+            'A. 버버리 포이베 파우치',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          minVerticalPadding: 30,
+          minLeadingWidth: 80,
+          trailing: IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.check_circle_outline_outlined,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class Tab2 extends StatelessWidget {
   final Size size;
   const Tab2({
@@ -437,32 +455,7 @@ class Tab2 extends StatelessWidget {
           style: Theme.of(context).textTheme.headline2,
         ),
         const SizedBox(height: 8),
-        SizedBox(
-          height: 150,
-          child: ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: 6,
-            itemBuilder: (context, index) => Container(
-              margin: const EdgeInsets.only(right: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Image.asset(
-                    'assets/images/actor.png',
-                    scale: 1.75,
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    '한비수 역',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  const Text('이민기'),
-                ],
-              ),
-            ),
-          ),
-        ),
+        const ActorHorizontalList(),
         const SizedBox(height: 48),
         Text(
           '줄거리',
@@ -505,6 +498,42 @@ class Tab2 extends StatelessWidget {
         ),
         SizedBox(height: size.height * 0.2)
       ],
+    );
+  }
+}
+
+class ActorHorizontalList extends StatelessWidget {
+  const ActorHorizontalList({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 150,
+      child: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: 6,
+        itemBuilder: (context, index) => Container(
+          margin: const EdgeInsets.only(right: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset(
+                'assets/images/actor.png',
+                scale: 1.75,
+              ),
+              const SizedBox(height: 5),
+              Text(
+                '한비수 역',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              const Text('이민기'),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -558,51 +587,65 @@ class Tab1 extends StatelessWidget {
           onChanged: (String? newValue) {},
         ),
         const SizedBox(height: 10),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: 10,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          itemBuilder: (context, index) => Container(
-            width: double.maxFinite,
-            padding: const EdgeInsets.only(bottom: 24),
-            child: Row(
+        const EpisodeList()
+      ],
+    );
+  }
+}
+
+class EpisodeList extends StatelessWidget {
+  const EpisodeList({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: 10,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      itemBuilder: (context, index) => Container(
+        width: double.maxFinite,
+        padding: const EdgeInsets.only(bottom: 24),
+        child: Row(
+          children: [
+            Stack(
+              alignment: Alignment.center,
               children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      height: 84,
-                      width: 144,
-                      decoration: BoxDecoration(color: Colors.blue.shade700),
-                    ),
-                    SvgPicture.asset('assets/images/icons/play.svg'),
-                  ],
+                Container(
+                  height: 84,
+                  width: 144,
+                  decoration: BoxDecoration(color: Colors.blue.shade700),
                 ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '${index + 1}화',
-                        style: Theme.of(context).textTheme.headline5,
-                      ),
-                      const Text('00:05:30:00'),
-                      const SizedBox(height: 10),
-                      Text(
-                        '내전으로 고립된 낯선 도시, 모가디슈 지금부터 우리의 목표내전으로...',
-                        style: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
-                      ),
-                    ],
-                  ),
-                )
+                SvgPicture.asset('assets/images/icons/play.svg'),
               ],
             ),
-          ),
-        )
-      ],
+            const SizedBox(width: 5),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${index + 1}화',
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                  const Text('00:05:30:00'),
+                  const SizedBox(height: 10),
+                  Text(
+                    '내전으로 고립된 낯선 도시, 모가디슈 지금부터 우리의 목표내전으로...',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6!
+                        .copyWith(fontSize: 12),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

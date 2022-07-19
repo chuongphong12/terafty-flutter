@@ -15,7 +15,8 @@ class PopularBloc extends Bloc<PopularEvent, PopularState> {
       emit(PopularLoading());
       try {
         List<Doc> content = await _popularRepository.getPopularContent();
-        emit(PopularLoaded(popular: content));
+        List<dynamic> banners = await _popularRepository.getBanner();
+        emit(PopularLoaded(popular: content, banners: banners));
       } catch (e) {
         emit(PopularFailure(error: e.toString()));
       }
