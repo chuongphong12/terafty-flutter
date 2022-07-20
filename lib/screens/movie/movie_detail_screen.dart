@@ -1,8 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:terafty_flutter/bloc/episode/episode_bloc.dart';
 import 'package:terafty_flutter/bloc/streaming/streaming_bloc.dart';
 import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
+import 'package:terafty_flutter/models/episode_model.dart';
+import 'package:terafty_flutter/repository/streaming_repository.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   static const String routeName = '/streaming';
@@ -40,6 +44,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
   Widget build(BuildContext context) {
     final screenPadding = MediaQuery.of(context).padding.top;
     final size = MediaQuery.of(context).size;
+    final StreamingRepository streamRepo = context.read<StreamingRepository>();
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -67,15 +72,38 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
               children: [
                 Stack(
                   children: [
-                    Container(
-                      constraints: BoxConstraints.expand(
-                          width: double.maxFinite, height: size.height * 0.35),
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/banner_1.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    BlocBuilder<StreamingBloc, StreamingState>(
+                      builder: (context, state) {
+                        if (state is StreamingLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          );
+                        }
+                        if (state is StreamingLoaded) {
+                          final data = state.streaming;
+                          return CachedNetworkImage(
+                            imageUrl: data.representativeImageMobileOversea,
+                            imageBuilder: (context, imageProvider) => Container(
+                              constraints: BoxConstraints.expand(
+                                  width: double.maxFinite,
+                                  height: size.height * 0.35),
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator.adaptive(),
+                            ),
+                          );
+                        } else {
+                          return const Center(
+                            child: Text('Error'),
+                          );
+                        }
+                      },
                     ),
                     Container(
                       constraints: BoxConstraints.expand(
@@ -204,15 +232,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                                     });
                                   },
                                   tabs: const [
-                                    Tab(
-                                      text: '회차',
-                                    ),
-                                    Tab(
-                                      text: '회차',
-                                    ),
-                                    Tab(
-                                      text: '회차',
-                                    )
+                                    Tab(text: '회차'),
+                                    Tab(text: '회차'),
+                                    Tab(text: '회차')
                                   ],
                                 ),
                               ),
@@ -220,7 +242,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                             const SizedBox(height: 20),
                             Builder(builder: (_) {
                               if (selectedTab == 0) {
-                                return Tab1(size: size); //1st custom tabBarView
+                                return Tab1(
+                                  size: size,
+                                  streamID: streaming.id,
+                                  streamingRepository: streamRepo,
+                                ); //1st custom tabBarView
                               } else if (selectedTab == 1) {
                                 return Tab2(size: size); //2nd tabView
                               } else {
@@ -538,53 +564,127 @@ class ActorHorizontalList extends StatelessWidget {
   }
 }
 
-class Tab1 extends StatelessWidget {
+class Tab1 extends StatefulWidget {
   const Tab1({
     Key? key,
+    required this.streamID,
     required this.size,
+    required this.streamingRepository,
   }) : super(key: key);
 
   final Size size;
+  final String streamID;
+  final StreamingRepository streamingRepository;
+
+  @override
+  State<Tab1> createState() => _Tab1State();
+}
+
+class _Tab1State extends State<Tab1> {
+  late String _mySelection;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        DropdownButtonFormField(
-          icon: const Icon(Icons.arrow_drop_down_circle_outlined),
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: Color(0xFFBDC5CB),
-              ),
-            ),
-            constraints: BoxConstraints.tightFor(height: size.height * 0.06),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
-            filled: false,
-          ),
-          selectedItemBuilder: (BuildContext context) {
-            return <String>['시즌 1', '시즌 2', '시즌 3', '시즌 4'].map((String value) {
-              return Text(
-                value,
-                style: Theme.of(context).textTheme.headline4!.copyWith(
-                      fontWeight: FontWeight.normal,
-                    ),
+        FutureBuilder(
+          future: widget.streamingRepository
+              .getAllSeasonByStreamID(widget.streamID),
+          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator.adaptive(),
               );
-            }).toList();
+            }
+            if (snapshot.hasData) {
+              final List<dynamic> listSeason = snapshot.data!;
+              _mySelection = listSeason[0]['seasonTemplateID']['_id'];
+              BlocProvider.of<EpisodeBloc>(context).add(
+                LoadEpisodeBySeasonID(
+                    seasonID: _mySelection, streamID: widget.streamID),
+              );
+              return DropdownButtonFormField(
+                icon: const Icon(Icons.arrow_drop_down_circle_outlined),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(
+                      color: Color(0xFFBDC5CB),
+                    ),
+                  ),
+                  constraints: BoxConstraints.tightFor(
+                      height: widget.size.height * 0.06),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                  ),
+                  filled: false,
+                ),
+                selectedItemBuilder: (BuildContext context) {
+                  return listSeason.map((dynamic value) {
+                    return Text(
+                      value['seasonTemplateID']['name_kr'],
+                      style: Theme.of(context).textTheme.headline4!.copyWith(
+                            fontWeight: FontWeight.normal,
+                          ),
+                    );
+                  }).toList();
+                },
+                isExpanded: true,
+                value: _mySelection,
+                borderRadius: BorderRadius.circular(15),
+                items: listSeason.map((dynamic value) {
+                  return DropdownMenuItem<String>(
+                    value: value['seasonTemplateID']['_id'],
+                    child: Text(value['seasonTemplateID']['name_kr']),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      BlocProvider.of<EpisodeBloc>(context).add(
+                        LoadEpisodeBySeasonID(
+                            seasonID: newValue, streamID: widget.streamID),
+                      );
+                      _mySelection = newValue;
+                    });
+                  }
+                },
+              );
+            } else {
+              return DropdownButtonFormField(
+                icon: const Icon(Icons.arrow_drop_down_circle_outlined),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(
+                      color: Color(0xFFBDC5CB),
+                    ),
+                  ),
+                  constraints: BoxConstraints.tightFor(
+                      height: widget.size.height * 0.06),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                  ),
+                  filled: false,
+                ),
+                isExpanded: true,
+                value: 'none',
+                borderRadius: BorderRadius.circular(15),
+                items: <String>['none'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: null,
+              );
+            }
           },
-          isExpanded: true,
-          value: '시즌 1',
-          borderRadius: BorderRadius.circular(15),
-          items: <String>['시즌 1', '시즌 2', '시즌 3', '시즌 4'].map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {},
         ),
         const SizedBox(height: 10),
         const EpisodeList()
@@ -600,52 +700,68 @@ class EpisodeList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: 10,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.zero,
-      itemBuilder: (context, index) => Container(
-        width: double.maxFinite,
-        padding: const EdgeInsets.only(bottom: 24),
-        child: Row(
-          children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  height: 84,
-                  width: 144,
-                  decoration: BoxDecoration(color: Colors.blue.shade700),
-                ),
-                SvgPicture.asset('assets/images/icons/play.svg'),
-              ],
-            ),
-            const SizedBox(width: 5),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocBuilder<EpisodeBloc, EpisodeState>(
+      builder: (context, state) {
+        if (state is EpisodeLoading) {
+          return const Center(
+            child: CircularProgressIndicator.adaptive(),
+          );
+        }
+        if (state is EpisodeLoaded) {
+          final List<Episode> episodes = state.episodes;
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: episodes.length,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            itemBuilder: (context, index) => Container(
+              width: double.maxFinite,
+              padding: const EdgeInsets.only(bottom: 24),
+              child: Row(
                 children: [
-                  Text(
-                    '${index + 1}화',
-                    style: Theme.of(context).textTheme.headline5,
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        height: 84,
+                        width: 144,
+                        decoration: BoxDecoration(color: Colors.blue.shade700),
+                      ),
+                      SvgPicture.asset('assets/images/icons/play.svg'),
+                    ],
                   ),
-                  const Text('00:05:30:00'),
-                  const SizedBox(height: 10),
-                  Text(
-                    '내전으로 고립된 낯선 도시, 모가디슈 지금부터 우리의 목표내전으로...',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6!
-                        .copyWith(fontSize: 12),
-                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${index + 1}화',
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                        const Text('00:05:30:00'),
+                        const SizedBox(height: 10),
+                        Text(
+                          '내전으로 고립된 낯선 도시, 모가디슈 지금부터 우리의 목표내전으로...',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6!
+                              .copyWith(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
+            ),
+          );
+        } else {
+          return const Center(
+            child: Text('Something went wrong!!'),
+          );
+        }
+      },
     );
   }
 }

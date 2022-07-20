@@ -211,8 +211,8 @@ class PopularGrid extends StatelessWidget {
       scrollDirection: Axis.vertical,
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      crossAxisSpacing: 10,
-      childAspectRatio: (9 / 18),
+      crossAxisSpacing: 12,
+      childAspectRatio: (9 / 17),
       children: List.generate(
         content.length,
         (index) => Column(
@@ -228,7 +228,7 @@ class PopularGrid extends StatelessWidget {
                 Navigator.pushNamed(context, MovieDetailScreen.routeName);
               },
               child: CachedNetworkImage(
-                imageUrl: content[index].imageMobileDomestic,
+                imageUrl: content[index].imageMobileOversea,
                 placeholder: (context, url) => const Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -242,7 +242,7 @@ class PopularGrid extends StatelessWidget {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: imageProvider,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -252,8 +252,10 @@ class PopularGrid extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Text(
-              content[index].titleKr,
+              content[index].titleEng,
               style: Theme.of(context).textTheme.headline4,
+              softWrap: false,
+              overflow: TextOverflow.fade,
             )
           ],
         ),

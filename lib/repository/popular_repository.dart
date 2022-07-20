@@ -10,8 +10,10 @@ class PopularRepository {
   Future<List<Doc>> getPopularContent() async {
     List<Doc> popular;
     try {
-      Response response =
-          await _api.dio.get('$baseURL/web-app/popular-content');
+      Response response = await _api.dio.get(
+        '$baseURL/web-app/popular-content',
+        queryParameters: {'limit': 20.toString()},
+      );
       PopularContent movieRes = PopularContent.fromJson(response.data);
       popular = movieRes.data.docs;
       return popular;
