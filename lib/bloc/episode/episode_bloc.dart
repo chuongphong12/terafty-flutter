@@ -14,12 +14,10 @@ class EpisodeBloc extends Bloc<EpisodeEvent, EpisodeState> {
     on<LoadEpisodeBySeasonID>((event, emit) async {
       emit(EpisodeLoading());
       try {
-        List<Episode> episodeData =
-            await _streamingRepository.getAllEpisodeByStreamIDAndSeason(
+        List<Episode> episodeData = await _streamingRepository.getAllEpisodeByStreamIDAndSeason(
           seasonID: event.seasonID,
           streamID: event.streamID,
         );
-        print(episodeData);
         emit(EpisodeLoaded(episodes: episodeData));
       } catch (e) {
         emit(

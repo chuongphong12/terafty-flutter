@@ -9,8 +9,7 @@ class StreamingRepository {
 
   Future<StreamingData> getStreamingDetail(String? id) async {
     try {
-      Response response =
-          await _api.dio.get('$baseURL/web-app/streaming/authen/$id');
+      Response response = await _api.dio.get('$baseURL/web-app/streaming/authen/$id');
       Streaming streamRes = Streaming.fromJson(response.data);
 
       return streamRes.data;
@@ -47,10 +46,10 @@ class StreamingRepository {
     List<Episode> episodes = [];
     try {
       Response response = await _api.dio.get(
-          '$baseURL/web-app/streaming/streaming-episodes/get-list-episodes-by-season',
-          queryParameters: {'streamingID': streamID, 'seasonID': seasonID});
+          '$baseURL/web-app/streaming/streaming-episodes/get-all-episodes-of-streaming',
+          queryParameters: {'streamingID': streamID});
       EpisodeResponse epRes = EpisodeResponse.fromJson(response.data);
-      episodes = epRes.data;
+      episodes = epRes.data.where((episode) => episode.seasonId == seasonID).toList();
       return episodes;
     } on DioError catch (e) {
       var error = e.response!.data['errors'];
