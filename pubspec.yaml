@@ -48,6 +48,7 @@ dependencies:
   form_builder_validators: ^8.2.0
   cached_network_image: ^3.2.1
   video_player: ^2.4.5
+  chewie: ^1.3.4
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +75,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/icons/
+    - assets/videos/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
