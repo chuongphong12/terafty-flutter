@@ -222,9 +222,11 @@ class PopularGrid extends StatelessWidget {
             InkWell(
               borderRadius: BorderRadius.circular(8),
               onTap: () {
-                BlocProvider.of<StreamingBloc>(context).add(LoadSteamingDetail(
-                    id: content[index].streamingId ??
-                        content[index].crowdfundingId!.id));
+                BlocProvider.of<StreamingBloc>(context).add(
+                  LoadSteamingDetail(
+                      id: content[index].streamingId ??
+                          content[index].crowdfundingId!.id),
+                );
                 Navigator.pushNamed(context, MovieDetailScreen.routeName);
               },
               child: CachedNetworkImage(

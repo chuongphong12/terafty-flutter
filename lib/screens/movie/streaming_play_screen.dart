@@ -1,5 +1,6 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class StreamingPlay extends StatefulWidget {
@@ -32,23 +33,41 @@ class _StreamingPlayState extends State<StreamingPlay> {
   }
 
   void playVideoByUrl() async {
-    _videoPlayerController = VideoPlayerController.network(
-        'https://omn-video-input.s3.ap-northeast-2.amazonaws.com/10_2021/29/Video_60efd7629bfb7532d4a12646_1635491819.mp4');
+    // _videoPlayerController = VideoPlayerController.network(
+    //     'https://omn-video-input.s3.ap-northeast-2.amazonaws.com/10_2021/29/Video_60efd7629bfb7532d4a12646_1635491819.mp4');
+    _videoPlayerController =
+        VideoPlayerController.asset('assets/videos/sample-video.mp4');
+    await _videoPlayerController.initialize();
+    setState(() {});
+    await setLandscape();
+    setState(() {});
     _chewieController = ChewieController(
-      allowedScreenSleep: false,
       allowFullScreen: true,
       videoPlayerController: _videoPlayerController,
       aspectRatio: _aspectRatio,
-      autoInitialize: true,
       autoPlay: true,
       showControls: true,
     );
+    setState(() {});
   }
+
+  Future setLandscape() async {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
+  }
+
+  Future setAllOrientations() async {}
 
   @override
   void dispose() {
     _videoPlayerController.dispose();
     _chewieController!.dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
     super.dispose();
   }
 
