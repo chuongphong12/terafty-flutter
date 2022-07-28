@@ -6,6 +6,7 @@ import 'package:terafty_flutter/bloc/episode/episode_bloc.dart';
 import 'package:terafty_flutter/bloc/streaming/streaming_bloc.dart';
 import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
 import 'package:terafty_flutter/models/episode_model.dart';
+import 'package:terafty_flutter/models/screen_argument.dart';
 import 'package:terafty_flutter/repository/streaming_repository.dart';
 import 'package:terafty_flutter/screens/movie/streaming_play_screen.dart';
 
@@ -741,7 +742,11 @@ class EpisodeList extends StatelessWidget {
               child: InkWell(
                 borderRadius: BorderRadius.circular(4),
                 onTap: () {
-                  Navigator.pushNamed(context, StreamingPlay.routeName);
+                  Navigator.pushNamed(
+                    context,
+                    StreamingPlay.routeName,
+                    arguments: ScreenArguments('link', episodes[index].url),
+                  );
                 },
                 child: Row(
                   children: [
