@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:terafty_flutter/constants/api_constant.dart';
 import 'package:terafty_flutter/models/episode_model.dart';
+import 'package:terafty_flutter/models/stream_detail_model.dart';
 import 'package:terafty_flutter/models/streaming_model.dart';
 import 'package:terafty_flutter/services/api_provider.dart';
 
@@ -9,7 +11,8 @@ class StreamingRepository {
 
   Future<StreamingData> getStreamingDetail(String? id) async {
     try {
-      Response response = await _api.dio.get('$baseURL/web-app/streaming/authen/$id');
+      Response response =
+          await _api.dio.get('$baseURL/web-app/streaming/authen/$id');
       Streaming streamRes = Streaming.fromJson(response.data);
 
       return streamRes.data;
@@ -49,11 +52,30 @@ class StreamingRepository {
           '$baseURL/web-app/streaming/streaming-episodes/get-all-episodes-of-streaming',
           queryParameters: {'streamingID': streamID});
       EpisodeResponse epRes = EpisodeResponse.fromJson(response.data);
-      episodes = epRes.data.where((episode) => episode.seasonId == seasonID).toList();
+      episodes =
+          epRes.data.where((episode) => episode.seasonId == seasonID).toList();
       return episodes;
     } on DioError catch (e) {
       var error = e.response!.data['errors'];
       print(error);
+      throw error;
+    } catch (exception) {
+      rethrow;
+    }
+  }
+
+  Future<StreamDetail> getDetailBySeason(
+      {required String seasonId, required String streamingId}) async {
+    try {
+      Response res = await _api.dio
+          .get('$baseURL/web-app/streaming/season/$seasonId', queryParameters: {
+        'streamingID': streamingId,
+      });
+      StreamDetailResponse streamRes = StreamDetailResponse.fromJson(res.data);
+      return streamRes.data;
+    } on DioError catch (e) {
+      var error = e.response!.data['errors'];
+      debugPrint(error);
       throw error;
     } catch (exception) {
       rethrow;

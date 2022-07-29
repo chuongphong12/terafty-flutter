@@ -61,15 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 5),
-                  Expanded(
-                    child: Text(
-                      'Terafty',
-                      style: Theme.of(context).textTheme.headline4!.copyWith(
-                            fontFamily: 'Galada',
-                            color: Colors.white,
-                            fontSize: 24,
-                          ),
-                    ),
+                  Image.asset(
+                    'assets/images/Terafty_Logo.png',
+                    width: 150,
+                    fit: BoxFit.contain,
+                  ),
+                  const Expanded(
+                    child: SizedBox(),
                   ),
                   IconButton(
                     onPressed: () {},
@@ -234,10 +232,13 @@ class PopularGrid extends StatelessWidget {
                 placeholder: (context, url) => const Center(
                   child: CircularProgressIndicator(),
                 ),
-                errorWidget: (context, url, error) => const Center(
-                  child: Icon(
-                    Icons.error,
-                    color: Colors.red,
+                errorWidget: (context, url, error) => AspectRatio(
+                  aspectRatio: 9 / 12.4,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/Terafty_Logo.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
                 imageBuilder: (context, imageProvider) => Container(

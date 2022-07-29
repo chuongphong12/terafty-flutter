@@ -7,6 +7,7 @@ import 'package:terafty_flutter/bloc/streaming/streaming_bloc.dart';
 import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
 import 'package:terafty_flutter/models/episode_model.dart';
 import 'package:terafty_flutter/models/screen_argument.dart';
+import 'package:terafty_flutter/models/stream_detail_model.dart';
 import 'package:terafty_flutter/repository/streaming_repository.dart';
 import 'package:terafty_flutter/screens/movie/streaming_play_screen.dart';
 
@@ -205,7 +206,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                                 ActionButton(
                                   assets: 'assets/images/icons/share.svg',
                                   text: '공유하기',
-                                )
+                                ),
                               ],
                             ),
                             const SizedBox(height: 20),
@@ -264,7 +265,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                                   selectedEpisode: selectedEpisode,
                                 ); //1st custom tabBarView
                               } else if (selectedTab == 1) {
-                                return Tab2(size: size); //2nd tabView
+                                return Tab2(
+                                  size: size,
+                                  streamingRepository: streamRepo,
+                                  streamingID: streaming.id,
+                                  seasonID:
+                                      BlocProvider.of<StreamingBloc>(context)
+                                          .seasonID,
+                                ); //2nd tabView
                               } else {
                                 return Tab3(size: size); //3rd tabView
                               }
@@ -313,43 +321,6 @@ class Tab3 extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DropdownButtonFormField(
-          icon: const Icon(Icons.arrow_drop_down_circle_outlined),
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: Color(0xFFBDC5CB),
-              ),
-            ),
-            constraints: BoxConstraints.tightFor(height: size.height * 0.06),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
-            filled: false,
-          ),
-          selectedItemBuilder: (BuildContext context) {
-            return <String>['시즌 1', '시즌 2', '시즌 3', '시즌 4'].map((String value) {
-              return Text(
-                value,
-                style: Theme.of(context).textTheme.headline4!.copyWith(
-                      fontWeight: FontWeight.normal,
-                    ),
-              );
-            }).toList();
-          },
-          isExpanded: true,
-          value: '시즌 1',
-          borderRadius: BorderRadius.circular(15),
-          items: <String>['시즌 1', '시즌 2', '시즌 3', '시즌 4'].map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {},
-        ),
-        const SizedBox(height: 16),
         DropdownButtonFormField(
           icon: const Icon(Icons.arrow_drop_down_circle_outlined),
           decoration: InputDecoration(
@@ -482,70 +453,96 @@ class ProductListView extends StatelessWidget {
 
 class Tab2 extends StatelessWidget {
   final Size size;
+  final StreamingRepository streamingRepository;
+  final String seasonID;
+  final String streamingID;
   const Tab2({
     required this.size,
+    required this.streamingRepository,
+    required this.seasonID,
+    required this.streamingID,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '등장인물',
-          style: Theme.of(context).textTheme.headline2,
-        ),
-        const SizedBox(height: 8),
-        const ActorHorizontalList(),
-        const SizedBox(height: 48),
-        Text(
-          '줄거리',
-          style: Theme.of(context).textTheme.headline2,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          '내전으로 고립된 낯선 도시, 모가디슈 지금부터 우리의 목표는 오로지 생존이다! 대한민국이 UN가입을 위해 동분서주하던 시기 1991년 소말리아의 수도 모가디슈에서는 일촉즉발의 내전이 일어난다.',
-          style: Theme.of(context).textTheme.headline6,
-        ),
-        const SizedBox(height: 48),
-        Text(
-          '제작정보',
-          style: Theme.of(context).textTheme.headline2,
-        ),
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          crossAxisSpacing: 10,
-          childAspectRatio: (21 / 4),
-          children: List.generate(
-            3,
-            (index) => Row(
-              children: [
-                Text(
-                  '감독',
-                  style: Theme.of(context).textTheme.headline5,
+    return FutureBuilder(
+      future: streamingRepository.getDetailBySeason(
+        seasonId: seasonID,
+        streamingId: streamingID,
+      ),
+      builder: (context, AsyncSnapshot<StreamDetail> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator.adaptive(),
+          );
+        }
+        if (snapshot.hasData) {
+          final detail = snapshot.data;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '등장인물',
+                style: Theme.of(context).textTheme.headline2,
+              ),
+              const SizedBox(height: 8),
+              ActorHorizontalList(participants: detail!.programParticipants),
+              const SizedBox(height: 48),
+              Text(
+                '줄거리',
+                style: Theme.of(context).textTheme.headline2,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                detail.storyKr,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              const SizedBox(height: 48),
+              Text(
+                '제작정보',
+                style: Theme.of(context).textTheme.headline2,
+              ),
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                crossAxisSpacing: 10,
+                childAspectRatio: (21 / 4),
+                children: List.generate(
+                  detail.productInformation.length,
+                  (index) => Row(
+                    children: [
+                      Text(
+                        detail.productInformation[index].nameKr,
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        detail.productInformation[index].dataKr,
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 10),
-                Text(
-                  '한비수',
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: size.height * 0.2)
-      ],
+              ),
+              SizedBox(height: size.height * 0.2)
+            ],
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 }
 
 class ActorHorizontalList extends StatelessWidget {
+  final List<ProgramParticipant> participants;
   const ActorHorizontalList({
+    required this.participants,
     Key? key,
   }) : super(key: key);
 
@@ -556,22 +553,43 @@ class ActorHorizontalList extends StatelessWidget {
       child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
-        itemCount: 6,
+        itemCount: participants.length,
         itemBuilder: (context, index) => Container(
           margin: const EdgeInsets.only(right: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(
-                'assets/images/actor.png',
-                scale: 1.75,
+              SizedBox(
+                height: 100,
+                width: 100,
+                child: CachedNetworkImage(
+                  imageUrl: participants[index].avatar,
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                  errorWidget: (context, url, error) => Center(
+                    child: Image.asset(
+                      'assets/images/Terafty_Logo.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 5),
               Text(
-                '한비수 역',
+                participants[index].dataNameActorKr,
                 style: Theme.of(context).textTheme.headline6,
               ),
-              const Text('이민기'),
+              Text(participants[index].dataNameCharacterKr),
             ],
           ),
         ),
@@ -626,6 +644,9 @@ class _Tab1State extends State<Tab1> {
                 LoadEpisodeBySeasonID(
                     seasonID: _mySelection, streamID: widget.streamID),
               );
+              BlocProvider.of<StreamingBloc>(context).add(
+                UpdateSeasonID(seasonID: _mySelection),
+              );
               return DropdownButtonFormField(
                 icon: const Icon(Icons.arrow_drop_down_circle_outlined),
                 decoration: InputDecoration(
@@ -667,6 +688,9 @@ class _Tab1State extends State<Tab1> {
                       BlocProvider.of<EpisodeBloc>(context).add(
                         LoadEpisodeBySeasonID(
                             seasonID: newValue, streamID: widget.streamID),
+                      );
+                      BlocProvider.of<StreamingBloc>(context).add(
+                        UpdateSeasonID(seasonID: newValue),
                       );
                       _mySelection = newValue;
                     });
@@ -760,7 +784,7 @@ class EpisodeList extends StatelessWidget {
                             height: 84,
                             width: 144,
                             child: Center(
-                              child: CircularProgressIndicator(),
+                              child: CircularProgressIndicator.adaptive(),
                             ),
                           ),
                           errorWidget: (context, url, error) => const Center(
@@ -798,6 +822,8 @@ class EpisodeList extends StatelessWidget {
                           const SizedBox(height: 10),
                           Text(
                             episodes[index].storyEpisodeEng,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: Theme.of(context)
                                 .textTheme
                                 .headline6!
@@ -832,13 +858,16 @@ class ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SvgPicture.asset(
-          assets,
-        ),
-        Text(text),
-      ],
+    return InkResponse(
+      onTap: () {},
+      child: Column(
+        children: [
+          SvgPicture.asset(
+            assets,
+          ),
+          Text(text),
+        ],
+      ),
     );
   }
 }

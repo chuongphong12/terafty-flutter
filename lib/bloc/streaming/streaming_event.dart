@@ -16,3 +16,13 @@ class LoadSteamingDetail extends StreamingEvent {
   @override
   List<Object> get props => [];
 }
+
+class UpdateSeasonID extends StreamingEvent {
+  final String seasonID;
+  const UpdateSeasonID({
+    required this.seasonID,
+  });
+
+  @override
+  List<Object> get props => [seasonID];
+}
