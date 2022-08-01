@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:terafty_flutter/constants/api_constant.dart';
+import 'package:terafty_flutter/models/comment_model.dart';
 import 'package:terafty_flutter/models/episode_model.dart';
 import 'package:terafty_flutter/models/stream_detail_model.dart';
 import 'package:terafty_flutter/models/streaming_model.dart';
+import 'package:terafty_flutter/models/vote_model.dart';
 import 'package:terafty_flutter/services/api_provider.dart';
 
 class StreamingRepository {
@@ -64,6 +66,30 @@ class StreamingRepository {
     }
   }
 
+  Future<List<dynamic>> getListEpisodeByStreamIDAndSeason({
+    required String streamID,
+    required String seasonID,
+  }) async {
+    List<dynamic> episodes = [];
+    try {
+      Response response = await _api.dio.get(
+          '$baseURL/web-app/streaming/streaming-episodes/get-list-episodes-by-season',
+          queryParameters: {
+            'streamingID': streamID,
+            'seasonID': seasonID,
+          });
+      episodes = response.data['data'] as List<dynamic>;
+      episodes = episodes.where((value) => value['deleted'] != true).toList();
+      return episodes;
+    } on DioError catch (e) {
+      var error = e.response!.data['errors'];
+      print(error);
+      throw error;
+    } catch (exception) {
+      rethrow;
+    }
+  }
+
   Future<StreamDetail> getDetailBySeason(
       {required String seasonId, required String streamingId}) async {
     try {
@@ -73,6 +99,52 @@ class StreamingRepository {
       });
       StreamDetailResponse streamRes = StreamDetailResponse.fromJson(res.data);
       return streamRes.data;
+    } on DioError catch (e) {
+      var error = e.response!.data['errors'];
+      debugPrint(error);
+      throw error;
+    } catch (exception) {
+      rethrow;
+    }
+  }
+
+  Future<VoteData> getVoteByEpisode({
+    required String seasonId,
+    required String streamingId,
+    required String episodeId,
+  }) async {
+    try {
+      Response res = await _api.dio
+          .get('$baseURL/web-app/streaming/vote/get-vote', queryParameters: {
+        'streamingID': streamingId,
+        'seasonID': seasonId,
+        'streamingEpisodesID': episodeId,
+      });
+      VoteData vote = VoteData.fromJson(res.data);
+      return vote;
+    } on DioError catch (e) {
+      var error = e.response!.data['errors'];
+      debugPrint(error);
+      throw error;
+    } catch (exception) {
+      rethrow;
+    }
+  }
+
+  Future<List<Comments>> getCommentByEpisode({
+    required String streamingId,
+    required String episodeId,
+  }) async {
+    List<Comments> comments = [];
+    try {
+      Response res = await _api.dio
+          .get('$baseURL/web-app/streaming/vote/get-vote', queryParameters: {
+        'streamingID': streamingId,
+        'streamingEpisodesID': episodeId,
+      });
+      CommentData commentRes = CommentData.fromJson(res.data);
+      comments = commentRes.docs;
+      return comments;
     } on DioError catch (e) {
       var error = e.response!.data['errors'];
       debugPrint(error);
