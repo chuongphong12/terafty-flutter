@@ -9,14 +9,14 @@ part 'streaming_state.dart';
 class StreamingBloc extends Bloc<StreamingEvent, StreamingState> {
   final StreamingRepository _streamingRepository;
   String seasonID = '';
+
   StreamingBloc({required StreamingRepository streamingRepository})
       : _streamingRepository = streamingRepository,
         super(StreamingInitial()) {
     on<LoadSteamingDetail>((event, emit) async {
       emit(StreamingLoading());
       try {
-        StreamingData streamData =
-            await _streamingRepository.getStreamingDetail(event.id);
+        StreamingData streamData = await _streamingRepository.getStreamingDetail(event.id);
         emit(StreamingLoaded(streaming: streamData));
       } catch (e) {
         emit(

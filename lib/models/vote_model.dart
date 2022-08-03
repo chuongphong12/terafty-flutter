@@ -69,7 +69,8 @@ class VoteData {
   factory VoteData.fromJson(Map<String, dynamic> json) => VoteData(
         vote: Vote.fromJson(json["vote"]),
         voteOption: List<VoteOption>.from(
-            json["voteOption"].map((x) => VoteOption.fromJson(x))),
+          json["voteOption"].map((x) => VoteOption.fromJson(x)),
+        ),
         isVote: json["isVote"],
       );
 

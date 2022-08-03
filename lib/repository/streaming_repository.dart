@@ -79,7 +79,10 @@ class StreamingRepository {
             'seasonID': seasonID,
           });
       episodes = response.data['data'] as List<dynamic>;
-      episodes = episodes.where((value) => value['deleted'] != true).toList();
+      episodes = episodes
+          .where((value) => value['deleted'] != true)
+          .where((value) => value['seasonID'] == seasonID)
+          .toList();
       return episodes;
     } on DioError catch (e) {
       var error = e.response!.data['errors'];
@@ -120,8 +123,8 @@ class StreamingRepository {
         'seasonID': seasonId,
         'streamingEpisodesID': episodeId,
       });
-      VoteData vote = VoteData.fromJson(res.data);
-      return vote;
+      VoteResponse vote = VoteResponse.fromJson(res.data);
+      return vote.data;
     } on DioError catch (e) {
       var error = e.response!.data['errors'];
       debugPrint(error);

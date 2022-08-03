@@ -26,8 +26,7 @@ class StorageService {
   }
 
   Future<String?> readSecureData(String key) async {
-    var readData =
-        await _secureStorage.read(key: key, aOptions: _getAndroidOptions());
+    var readData = await _secureStorage.read(key: key, aOptions: _getAndroidOptions());
     return readData;
   }
 
@@ -36,8 +35,8 @@ class StorageService {
   }
 
   Future<bool> containsKeyInSecureData(String key) async {
-    var containsKey = await _secureStorage.containsKey(
-        key: key, aOptions: _getAndroidOptions());
+    var containsKey =
+        await _secureStorage.containsKey(key: key, aOptions: _getAndroidOptions());
     return containsKey;
   }
 

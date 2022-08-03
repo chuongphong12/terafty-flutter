@@ -2,12 +2,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:terafty_flutter/bloc/episode/episode_bloc.dart';
 import 'package:terafty_flutter/bloc/streaming/streaming_bloc.dart';
+import 'package:terafty_flutter/bloc/vote/vote_bloc.dart';
 import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
 import 'package:terafty_flutter/models/episode_model.dart';
 import 'package:terafty_flutter/models/screen_argument.dart';
 import 'package:terafty_flutter/models/stream_detail_model.dart';
+import 'package:terafty_flutter/models/vote_model.dart';
 import 'package:terafty_flutter/repository/streaming_repository.dart';
 import 'package:terafty_flutter/screens/movie/streaming_play_screen.dart';
 
@@ -33,6 +36,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
   int selectedTab = 0;
   int selectedEpisode = 0;
   String streamingLink = '';
+
   @override
   void initState() {
     super.initState();
@@ -97,8 +101,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                             imageUrl: data.representativeImageMobileOversea,
                             imageBuilder: (context, imageProvider) => Container(
                               constraints: BoxConstraints.expand(
-                                  width: double.maxFinite,
-                                  height: size.height * 0.35),
+                                width: double.maxFinite,
+                                height: size.height * 0.35,
+                              ),
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: imageProvider,
@@ -321,6 +326,7 @@ class Tab3 extends StatefulWidget {
   final StreamingRepository streamingRepository;
   final String seasonId;
   final String streamingId;
+
   const Tab3({
     required this.size,
     Key? key,
@@ -334,7 +340,8 @@ class Tab3 extends StatefulWidget {
 }
 
 class _Tab3State extends State<Tab3> {
-  String initialEpisode = '에피소드 1';
+  String _initialEpisode = '';
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -353,6 +360,17 @@ class _Tab3State extends State<Tab3> {
             }
             if (snapshot.hasData) {
               final List? episode = snapshot.data;
+              if (_initialEpisode == '' &&
+                  _initialEpisode != episode![0]['_id']) {
+                _initialEpisode = episode[0]['_id'];
+                BlocProvider.of<VoteBloc>(context).add(
+                  LoadVoteByEpisode(
+                    episodesID: _initialEpisode,
+                    seasonID: widget.seasonId,
+                    streamingID: widget.streamingId,
+                  ),
+                );
+              }
               return DropdownButtonFormField(
                 icon: const Icon(Icons.arrow_drop_down_circle_outlined),
                 decoration: InputDecoration(
@@ -380,11 +398,11 @@ class _Tab3State extends State<Tab3> {
                   }).toList();
                 },
                 isExpanded: true,
-                value: initialEpisode,
+                value: _initialEpisode != '' ? _initialEpisode : null,
                 borderRadius: BorderRadius.circular(15),
                 items: episode!.map((dynamic value) {
                   return DropdownMenuItem<dynamic>(
-                    value: value['episodesTemplateID']['name_kr'],
+                    value: value['_id'],
                     child: Text(
                       value['episodesTemplateID']['name_kr'],
                     ),
@@ -392,7 +410,14 @@ class _Tab3State extends State<Tab3> {
                 }).toList(),
                 onChanged: (dynamic newValue) {
                   setState(() {
-                    initialEpisode = newValue;
+                    _initialEpisode = newValue;
+                    BlocProvider.of<VoteBloc>(context).add(
+                      LoadVoteByEpisode(
+                        episodesID: _initialEpisode,
+                        seasonID: widget.seasonId,
+                        streamingID: widget.streamingId,
+                      ),
+                    );
                   });
                 },
               );
@@ -402,50 +427,53 @@ class _Tab3State extends State<Tab3> {
           },
         ),
         const SizedBox(height: 16),
-        ConstrainedBox(
-          constraints: BoxConstraints.tightFor(width: widget.size.width * 0.8),
-          child: Text(
-            '한비수가 한비수에게 줄 생일 선물을 골라 주세요.',
-            style: Theme.of(context).textTheme.headline3,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          '내전으로 고립된 낯선 도시, 모가디슈 지금부터 우리의 목표는 오로지 생존이다! 대한민국이 UN가입을 위해 동분서주하던 시기 1991년 소말리아의 수도 모가디슈에서는 일촉즉발의 내전이 일어난다.',
-          style: Theme.of(context).textTheme.headline6,
-        ),
-        const SizedBox(height: 16),
-        Text(
-          '기간: 2021.12.12 ~ 2021.12.12',
-          style: Theme.of(context)
-              .textTheme
-              .headline6!
-              .copyWith(fontSize: 12, color: const Color(0xFF888F95)),
-        ),
-        const ProductListView(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        VoteSection(widget: widget),
+        const SizedBox(height: 75),
+        Column(
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset('assets/images/icons/User.svg'),
-                const SizedBox(width: 7),
-                Text(
-                  '490명 참여',
-                  style: Theme.of(context).textTheme.headline6,
-                )
-              ],
+            TextFormField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                constraints:
+                    BoxConstraints.tightFor(height: widget.size.height * 0.06),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                ),
+                filled: true,
+                fillColor: const Color(0xFF2A343D),
+                hintText: 'Please leave a message of support.',
+                hintStyle: const TextStyle(
+                  color: Color(0xFF888f95),
+                  fontSize: 14,
+                ),
+              ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                fixedSize: const Size(157, 48),
-              ),
-              onPressed: () {},
-              child: Text(
-                '투표하기',
-                style: Theme.of(context).textTheme.headline5,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Refresh'),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    textStyle: Theme.of(context).textTheme.headline5,
+                    primary: const Color(0xFFBDC5CB),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Refresh'),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    textStyle: Theme.of(context).textTheme.headline5,
+                    primary: const Color(0xFFBDC5CB),
+                  ),
+                ),
+              ],
             )
           ],
         )
@@ -454,8 +482,114 @@ class _Tab3State extends State<Tab3> {
   }
 }
 
+class VoteSection extends StatelessWidget {
+  const VoteSection({
+    Key? key,
+    required this.widget,
+  }) : super(key: key);
+
+  final Tab3 widget;
+
+  String formattedDate(DateTime time) {
+    String formattedDate = DateFormat('yyyy.MM.dd').format(time);
+    return formattedDate;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<VoteBloc, VoteState>(
+      builder: (context, state) {
+        if (state is VoteLoading) {
+          return const Center(
+            child: CircularProgressIndicator.adaptive(),
+          );
+        }
+        if (state is VoteLoaded) {
+          final data = state.vote;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ConstrainedBox(
+                constraints:
+                    BoxConstraints.tightFor(width: widget.size.width * 0.8),
+                child: Text(
+                  data.vote.titleKr,
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                data.vote.contentKr,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '기간: ${formattedDate(data.vote.startDate)} ~ ${formattedDate(data.vote.endDate)}',
+                style: Theme.of(context).textTheme.headline6!.copyWith(
+                      fontSize: 12,
+                      color: const Color(0xFF888F95),
+                    ),
+              ),
+              ProductListView(voteOptions: data.voteOption),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset('assets/images/icons/User.svg'),
+                          const SizedBox(width: 7),
+                          Text(
+                            '${data.vote.quantity}명 참여',
+                            style: Theme.of(context).textTheme.headline6,
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset('assets/images/icons/Ticket.svg'),
+                          const SizedBox(width: 7),
+                          Text(
+                            'Participate Once',
+                            style: Theme.of(context).textTheme.headline6,
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: const Size(157, 48),
+                    ),
+                    onPressed: () {},
+                    child: Text(
+                      '투표하기',
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                  )
+                ],
+              )
+            ],
+          );
+        } else {
+          return const Center(
+            child: Text('Something went wrong!!'),
+          );
+        }
+      },
+    );
+  }
+}
+
 class ProductListView extends StatelessWidget {
+  final List<VoteOption> voteOptions;
   const ProductListView({
+    required this.voteOptions,
     Key? key,
   }) : super(key: key);
 
@@ -464,12 +598,26 @@ class ProductListView extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: 2,
+      itemCount: voteOptions.length,
       padding: const EdgeInsets.symmetric(vertical: 20),
       itemBuilder: (context, index) => Container(
         margin: const EdgeInsets.only(bottom: 16),
         child: ListTile(
-          leading: Image.asset('assets/images/product.png', fit: BoxFit.cover),
+          leading: CachedNetworkImage(
+            imageUrl: voteOptions[index].image,
+            height: 120,
+            width: 120,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => const Center(
+              child: CircularProgressIndicator.adaptive(),
+            ),
+            errorWidget: (context, url, error) => const Center(
+              child: Icon(
+                Icons.error,
+                color: Colors.red,
+              ),
+            ),
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
             side: const BorderSide(
@@ -477,7 +625,7 @@ class ProductListView extends StatelessWidget {
             ),
           ),
           title: Text(
-            'A. 버버리 포이베 파우치',
+            voteOptions[index].dataKr,
             style: Theme.of(context).textTheme.headline4,
           ),
           minVerticalPadding: 30,
@@ -500,6 +648,7 @@ class Tab2 extends StatelessWidget {
   final StreamingRepository streamingRepository;
   final String seasonID;
   final String streamingID;
+
   const Tab2({
     required this.size,
     required this.streamingRepository,
@@ -585,6 +734,7 @@ class Tab2 extends StatelessWidget {
 
 class ActorHorizontalList extends StatelessWidget {
   final List<ProgramParticipant> participants;
+
   const ActorHorizontalList({
     required this.participants,
     Key? key,
@@ -894,6 +1044,7 @@ class EpisodeList extends StatelessWidget {
 class ActionButton extends StatelessWidget {
   final String assets;
   final String text;
+
   const ActionButton({
     required this.assets,
     required this.text,
