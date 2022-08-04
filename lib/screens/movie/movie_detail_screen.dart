@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:terafty_flutter/bloc/comment/comment_bloc.dart';
 import 'package:terafty_flutter/bloc/episode/episode_bloc.dart';
 import 'package:terafty_flutter/bloc/streaming/streaming_bloc.dart';
 import 'package:terafty_flutter/bloc/vote/vote_bloc.dart';
@@ -341,6 +342,7 @@ class Tab3 extends StatefulWidget {
 
 class _Tab3State extends State<Tab3> {
   String _initialEpisode = '';
+  String filterOption = '';
 
   @override
   Widget build(BuildContext context) {
@@ -370,9 +372,15 @@ class _Tab3State extends State<Tab3> {
                     streamingID: widget.streamingId,
                   ),
                 );
+                BlocProvider.of<CommentBloc>(context).add(
+                  LoadCommentFromApi(
+                    streamID: widget.streamingId,
+                    episodeID: _initialEpisode,
+                  ),
+                );
               }
               return DropdownButtonFormField(
-                icon: const Icon(Icons.arrow_drop_down_circle_outlined),
+                icon: SvgPicture.asset('assets/images/icons/down.svg'),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -387,17 +395,8 @@ class _Tab3State extends State<Tab3> {
                   ),
                   filled: false,
                 ),
-                selectedItemBuilder: (BuildContext context) {
-                  return episode!.map((dynamic value) {
-                    return Text(
-                      value['episodesTemplateID']['name_kr'],
-                      style: Theme.of(context).textTheme.headline4!.copyWith(
-                            fontWeight: FontWeight.normal,
-                          ),
-                    );
-                  }).toList();
-                },
                 isExpanded: true,
+                dropdownColor: Theme.of(context).primaryColor,
                 value: _initialEpisode != '' ? _initialEpisode : null,
                 borderRadius: BorderRadius.circular(15),
                 items: episode!.map((dynamic value) {
@@ -405,6 +404,7 @@ class _Tab3State extends State<Tab3> {
                     value: value['_id'],
                     child: Text(
                       value['episodesTemplateID']['name_kr'],
+                      style: Theme.of(context).textTheme.headline5,
                     ),
                   );
                 }).toList(),
@@ -459,25 +459,128 @@ class _Tab3State extends State<Tab3> {
                   label: const Text('Refresh'),
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
-                    textStyle: Theme.of(context).textTheme.headline5,
+                    textStyle: Theme.of(context).textTheme.headline6,
                     primary: const Color(0xFFBDC5CB),
                   ),
                 ),
-                TextButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Refresh'),
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    textStyle: Theme.of(context).textTheme.headline5,
-                    primary: const Color(0xFFBDC5CB),
+                DropdownButtonHideUnderline(
+                  child: DropdownButton(
+                    icon: SvgPicture.asset('assets/images/icons/down.svg'),
+                    value: filterOption == '' ? 'Popular' : filterOption,
+                    dropdownColor: Theme.of(context).primaryColor,
+                    items: <String>['Popular', 'Newest']
+                        .map(
+                          (e) => DropdownMenuItem<String>(
+                            value: e,
+                            child: Text(
+                              e,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(
+                                    color: const Color(0xFFBDC5CB),
+                                  ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        filterOption = newValue!;
+                      });
+                    },
                   ),
                 ),
               ],
-            )
+            ),
+            const CommentList()
           ],
         )
       ],
+    );
+  }
+}
+
+class CommentList extends StatelessWidget {
+  const CommentList({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CommentBloc, CommentState>(
+      builder: (context, state) {
+        if (state is CommentLoading) {
+          return const Center(
+            child: CircularProgressIndicator.adaptive(),
+          );
+        }
+        if (state is CommentLoaded) {
+          return ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: 2,
+            padding: const EdgeInsets.symmetric(vertical: 25),
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: CircleAvatar(
+                  child: Image.asset('assets/images/actor.png'),
+                ),
+                title: Text(
+                  'asdwasdas',
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+                subtitle: Column(
+                  children: [
+                    Text(
+                      'Mogadishu, a strange city isolated by civil war From now on, our only goal is to survive!',
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          '20 minutes ago',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6!
+                              .copyWith(fontSize: 12),
+                        ),
+                        const SizedBox(width: 32),
+                        TextButton.icon(
+                          onPressed: () {},
+                          icon: SvgPicture.asset(
+                            'assets/images/icons/heart.svg',
+                          ),
+                          label: Text(
+                            '12',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6!
+                                .copyWith(fontSize: 12),
+                          ),
+                        ),
+                        const SizedBox(width: 32),
+                        Text(
+                          'Reply',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6!
+                              .copyWith(fontSize: 12),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        } else {
+          return const Center(
+            child: Text('Something went wrong'),
+          );
+        }
+      },
     );
   }
 }
@@ -842,7 +945,7 @@ class _Tab1State extends State<Tab1> {
                 UpdateSeasonID(seasonID: _mySelection),
               );
               return DropdownButtonFormField(
-                icon: const Icon(Icons.arrow_drop_down_circle_outlined),
+                icon: SvgPicture.asset('assets/images/icons/down.svg'),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),

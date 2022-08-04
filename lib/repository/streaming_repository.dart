@@ -145,8 +145,8 @@ class StreamingRepository {
         'streamingID': streamingId,
         'streamingEpisodesID': episodeId,
       });
-      CommentData commentRes = CommentData.fromJson(res.data);
-      comments = commentRes.docs;
+      CommentResponse commentRes = CommentResponse.fromJson(res.data);
+      comments = commentRes.data.docs;
       return comments;
     } on DioError catch (e) {
       var error = e.response!.data['errors'];

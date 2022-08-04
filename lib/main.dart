@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terafty_flutter/bloc/auth/auth_bloc.dart';
+import 'package:terafty_flutter/bloc/comment/comment_bloc.dart';
 import 'package:terafty_flutter/bloc/episode/episode_bloc.dart';
 import 'package:terafty_flutter/bloc/login/login_bloc.dart';
 import 'package:terafty_flutter/bloc/popular/popular_bloc.dart';
@@ -75,6 +76,11 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => VoteBloc(
+              streamingRepository: context.read<StreamingRepository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => CommentBloc(
               streamingRepository: context.read<StreamingRepository>(),
             ),
           )
