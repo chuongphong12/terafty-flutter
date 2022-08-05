@@ -234,62 +234,81 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>
                               ),
                             ),
                             const SizedBox(height: 40),
-                            Center(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      width: 1,
-                                      color: Colors.lightBlue.shade900,
-                                    ),
+                            Stack(
+                              alignment: Alignment.bottomLeft,
+                              children: [
+                                SizedBox(
+                                  width: size.width * 0.70,
+                                  child: TabBar(
+                                    controller: _tabController,
+                                    onTap: (int index) {
+                                      setState(() {
+                                        selectedTab = index;
+                                        _tabController.animateTo(selectedTab);
+                                      });
+                                    },
+                                    tabs: const [
+                                      Tab(text: '회차'),
+                                      Tab(text: '상세설명'),
+                                      Tab(text: '투표')
+                                    ],
                                   ),
                                 ),
-                                width: size.width * 0.55,
-                                child: TabBar(
-                                  controller: _tabController,
-                                  onTap: (int index) {
-                                    setState(() {
-                                      selectedTab = index;
-                                      _tabController.animateTo(selectedTab);
-                                    });
-                                  },
-                                  tabs: const [
-                                    Tab(text: '회차'),
-                                    Tab(text: '회차'),
-                                    Tab(text: '회차')
-                                  ],
-                                ),
-                              ),
+                                Positioned(
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          width: 1,
+                                          color: Color(0xFF2A343D),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                             const SizedBox(height: 20),
-                            Builder(builder: (_) {
-                              if (selectedTab == 0) {
-                                return Tab1(
-                                  size: size,
-                                  streamID: streaming.id,
-                                  streamingRepository: streamRepo,
-                                  selectedEpisode: selectedEpisode,
-                                ); //1st custom tabBarView
-                              } else if (selectedTab == 1) {
-                                return Tab2(
-                                  size: size,
-                                  streamingRepository: streamRepo,
-                                  streamingID: streaming.id,
-                                  seasonID:
-                                      BlocProvider.of<StreamingBloc>(context)
-                                          .seasonID,
-                                ); //2nd tabView
-                              } else {
-                                return Tab3(
-                                  size: size,
-                                  streamingRepository: streamRepo,
-                                  streamingId: streaming.id,
-                                  seasonId:
-                                      BlocProvider.of<StreamingBloc>(context)
-                                          .seasonID,
-                                ); //3rd tabView
-                              }
-                            }),
+                            Builder(
+                              builder: (_) {
+                                return ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                      minHeight: size.height * 0.5),
+                                  child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      if (selectedTab == 0) {
+                                        return Tab1(
+                                          size: size,
+                                          streamID: streaming.id,
+                                          streamingRepository: streamRepo,
+                                          selectedEpisode: selectedEpisode,
+                                        ); //1st custom tabBarView
+                                      } else if (selectedTab == 1) {
+                                        return Tab2(
+                                          size: size,
+                                          streamingRepository: streamRepo,
+                                          streamingID: streaming.id,
+                                          seasonID:
+                                              BlocProvider.of<StreamingBloc>(
+                                                      context)
+                                                  .seasonID,
+                                        ); //2nd tabView
+                                      } else {
+                                        return Tab3(
+                                          size: size,
+                                          streamingRepository: streamRepo,
+                                          streamingId: streaming.id,
+                                          seasonId:
+                                              BlocProvider.of<StreamingBloc>(
+                                                      context)
+                                                  .seasonID,
+                                        ); //3rd tabView
+                                      }
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
                           ],
                         );
                       } else {
@@ -418,6 +437,12 @@ class _Tab3State extends State<Tab3> {
                         streamingID: widget.streamingId,
                       ),
                     );
+                    BlocProvider.of<CommentBloc>(context).add(
+                      LoadCommentFromApi(
+                        streamID: widget.streamingId,
+                        episodeID: _initialEpisode,
+                      ),
+                    );
                   });
                 },
               );
@@ -516,24 +541,38 @@ class CommentList extends StatelessWidget {
           );
         }
         if (state is CommentLoaded) {
+          final comments = state.comments;
           return ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: 2,
+            itemCount: comments.length,
             padding: const EdgeInsets.symmetric(vertical: 25),
             itemBuilder: (context, index) {
               return ListTile(
-                leading: CircleAvatar(
-                  child: Image.asset('assets/images/actor.png'),
+                leading: CachedNetworkImage(
+                  imageUrl: comments[index].userId.avatar,
+                  imageBuilder: (context, imageProvider) => CircleAvatar(
+                    backgroundImage: imageProvider,
+                  ),
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                  errorWidget: (context, url, error) => const Center(
+                    child: Icon(
+                      Icons.error,
+                      color: Colors.red,
+                    ),
+                  ),
                 ),
                 title: Text(
-                  'asdwasdas',
+                  comments[index].userId.userName,
                   style: Theme.of(context).textTheme.headline5,
                 ),
                 subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Mogadishu, a strange city isolated by civil war From now on, our only goal is to survive!',
+                      comments[index].content,
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     Row(

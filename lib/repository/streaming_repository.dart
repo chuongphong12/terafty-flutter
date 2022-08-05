@@ -140,11 +140,12 @@ class StreamingRepository {
   }) async {
     List<Comments> comments = [];
     try {
-      Response res = await _api.dio
-          .get('$baseURL/web-app/streaming/vote/get-vote', queryParameters: {
-        'streamingID': streamingId,
-        'streamingEpisodesID': episodeId,
-      });
+      Response res = await _api.dio.get(
+          '$baseURL/web-app/streaming/comment/get-list-comment-by-episodes',
+          queryParameters: {
+            'streamingID': streamingId,
+            'streamingEpisodesID': episodeId,
+          });
       CommentResponse commentRes = CommentResponse.fromJson(res.data);
       comments = commentRes.data.docs;
       return comments;

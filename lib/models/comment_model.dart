@@ -57,7 +57,6 @@ class CommentData {
     required this.totalPages,
     required this.page,
     required this.pagingCounter,
-    required this.nextPage,
   });
 
   final int limit;
@@ -69,7 +68,6 @@ class CommentData {
   final int totalPages;
   final int page;
   final int pagingCounter;
-  final int nextPage;
 
   CommentData copyWith({
     required int limit,
@@ -81,7 +79,6 @@ class CommentData {
     required int totalPages,
     required int page,
     required int pagingCounter,
-    required int nextPage,
   }) =>
       CommentData(
         limit: limit,
@@ -93,7 +90,6 @@ class CommentData {
         totalPages: totalPages,
         page: page,
         pagingCounter: pagingCounter,
-        nextPage: nextPage,
       );
 
   factory CommentData.fromJson(Map<String, dynamic> json) => CommentData(
@@ -107,7 +103,6 @@ class CommentData {
         totalPages: json["totalPages"],
         page: json["page"],
         pagingCounter: json["pagingCounter"],
-        nextPage: json["nextPage"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -115,12 +110,13 @@ class CommentData {
         "hasPrevPage": hasPrevPage,
         "hasNextPage": hasNextPage,
         "hasMore": hasMore,
-        "docs": List<dynamic>.from(docs.map((x) => x.toJson())),
+        "docs": docs == null
+            ? null
+            : List<dynamic>.from(docs.map((x) => x.toJson())),
         "totalDocs": totalDocs,
         "totalPages": totalPages,
         "page": page,
         "pagingCounter": pagingCounter,
-        "nextPage": nextPage,
       };
 }
 
