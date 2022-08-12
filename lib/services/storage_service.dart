@@ -17,6 +17,8 @@ class StorageService {
         encryptedSharedPreferences: true,
       );
 
+  IOSOptions _getIosOptions() => const IOSOptions();
+
   Future<void> writeSecureData(StorageItem newItem) async {
     await _secureStorage.write(
       key: newItem.key,
@@ -35,8 +37,7 @@ class StorageService {
   }
 
   Future<bool> containsKeyInSecureData(String key) async {
-    var containsKey =
-        await _secureStorage.containsKey(key: key, aOptions: _getAndroidOptions());
+    var containsKey = await _secureStorage.containsKey(key: key, aOptions: _getAndroidOptions());
     return containsKey;
   }
 

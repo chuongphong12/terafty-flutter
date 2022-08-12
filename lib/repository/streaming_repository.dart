@@ -13,8 +13,7 @@ class StreamingRepository {
 
   Future<StreamingData> getStreamingDetail(String? id) async {
     try {
-      Response response =
-          await _api.dio.get('$baseURL/web-app/streaming/authen/$id');
+      Response response = await _api.dio.get('$baseURL/web-app/streaming/authen/$id');
       Streaming streamRes = Streaming.fromJson(response.data);
 
       return streamRes.data;
@@ -54,8 +53,7 @@ class StreamingRepository {
           '$baseURL/web-app/streaming/streaming-episodes/get-all-episodes-of-streaming',
           queryParameters: {'streamingID': streamID});
       EpisodeResponse epRes = EpisodeResponse.fromJson(response.data);
-      episodes =
-          epRes.data.where((episode) => episode.seasonId == seasonID).toList();
+      episodes = epRes.data.where((episode) => episode.seasonId == seasonID).toList();
       return episodes;
     } on DioError catch (e) {
       var error = e.response!.data['errors'];
@@ -96,8 +94,8 @@ class StreamingRepository {
   Future<StreamDetail> getDetailBySeason(
       {required String seasonId, required String streamingId}) async {
     try {
-      Response res = await _api.dio
-          .get('$baseURL/web-app/streaming/season/$seasonId', queryParameters: {
+      Response res =
+          await _api.dio.get('$baseURL/web-app/streaming/season/$seasonId', queryParameters: {
         'streamingID': streamingId,
       });
       StreamDetailResponse streamRes = StreamDetailResponse.fromJson(res.data);
@@ -117,8 +115,8 @@ class StreamingRepository {
     required String episodeId,
   }) async {
     try {
-      Response res = await _api.dio
-          .get('$baseURL/web-app/streaming/vote/get-vote', queryParameters: {
+      Response res =
+          await _api.dio.get('$baseURL/web-app/streaming/vote/get-vote', queryParameters: {
         'streamingID': streamingId,
         'seasonID': seasonId,
         'streamingEpisodesID': episodeId,
@@ -140,12 +138,11 @@ class StreamingRepository {
   }) async {
     List<Comments> comments = [];
     try {
-      Response res = await _api.dio.get(
-          '$baseURL/web-app/streaming/comment/get-list-comment-by-episodes',
-          queryParameters: {
-            'streamingID': streamingId,
-            'streamingEpisodesID': episodeId,
-          });
+      Response res = await _api.dio
+          .get('$baseURL/web-app/streaming/comment/get-list-comment-by-episodes', queryParameters: {
+        'streamingID': streamingId,
+        'streamingEpisodesID': episodeId,
+      });
       CommentResponse commentRes = CommentResponse.fromJson(res.data);
       comments = commentRes.data.docs;
       return comments;

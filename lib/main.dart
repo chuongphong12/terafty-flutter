@@ -19,12 +19,8 @@ import 'package:terafty_flutter/simple_bloc_observer.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  BlocOverrides.runZoned(
-    () {
-      runApp(const MyApp());
-    },
-    blocObserver: SimpleBlocObserver(),
-  );
+  Bloc.observer = SimpleBlocObserver();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
