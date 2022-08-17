@@ -27,6 +27,7 @@ class BoardingScreen extends StatelessWidget {
               image: const DecorationImage(
                 image: AssetImage("assets/images/boarding.png"),
                 fit: BoxFit.cover,
+                opacity: 0.4,
               ),
             ),
           ),
