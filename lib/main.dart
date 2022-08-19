@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
               authRepositories: context.read<AuthRepositories>(),
               storageService: StorageService(),
               userRepository: context.read<UserRepository>(),
-            )..add(AppStarted()),
+            ),
           ),
           BlocProvider(
             create: (context) => LoginBloc(
