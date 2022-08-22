@@ -9,6 +9,15 @@ abstract class AuthEvent extends Equatable {
 
 class AppStarted extends AuthEvent {}
 
+class AuthenticationStatusChanged extends AuthEvent {
+  const AuthenticationStatusChanged(this.status);
+
+  final AuthenticationStatus status;
+
+  @override
+  List<Object> get props => [status];
+}
+
 class LoggedIn extends AuthEvent {
   final String token;
 

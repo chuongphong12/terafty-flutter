@@ -1,11 +1,25 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:terafty_flutter/constants/api_constant.dart';
 import 'package:terafty_flutter/models/user_model.dart';
 
+enum AuthenticationStatus { unknown, authenticated, unauthenticated }
+
 class AuthRepositories {
   final Dio _dio = Dio();
+  final _controller = StreamController<AuthenticationStatus>();
 
-  Future<String> login(String email, String password) async {
+  Stream<AuthenticationStatus> get status async* {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    yield AuthenticationStatus.unauthenticated;
+    yield* _controller.stream;
+  }
+
+  Future<String> logIn({
+    required String email,
+    required String password,
+  }) async {
     User? user;
     try {
       Response response = await _dio.post('$baseURL/user/login', data: {
@@ -31,4 +45,10 @@ class AuthRepositories {
       rethrow;
     }
   }
+
+  void logOut() {
+    _controller.add(AuthenticationStatus.unauthenticated);
+  }
+
+  void dispose() => _controller.close();
 }

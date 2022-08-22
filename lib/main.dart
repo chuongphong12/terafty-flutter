@@ -12,6 +12,7 @@ import 'package:terafty_flutter/configs/theme.dart';
 import 'package:terafty_flutter/repository/auth_repository.dart';
 import 'package:terafty_flutter/repository/popular_repository.dart';
 import 'package:terafty_flutter/repository/streaming_repository.dart';
+import 'package:terafty_flutter/repository/user_repository.dart';
 import 'package:terafty_flutter/screens/auth/login_main_screen.dart';
 import 'package:terafty_flutter/screens/home/home_screen.dart';
 import 'package:terafty_flutter/services/storage_service.dart';
@@ -19,12 +20,8 @@ import 'package:terafty_flutter/simple_bloc_observer.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  BlocOverrides.runZoned(
-    () {
-      runApp(const MyApp());
-    },
-    blocObserver: SimpleBlocObserver(),
-  );
+  Bloc.observer = SimpleBlocObserver();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -44,6 +41,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(
           create: (context) => StreamingRepository(),
         ),
+        RepositoryProvider(
+          create: (context) => UserRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
             create: (context) => AuthBloc(
               authRepositories: context.read<AuthRepositories>(),
               storageService: StorageService(),
+              userRepository: context.read<UserRepository>(),
             )..add(AppStarted()),
           ),
           BlocProvider(
