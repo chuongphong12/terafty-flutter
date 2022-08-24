@@ -21,11 +21,17 @@ import 'package:terafty_flutter/simple_bloc_observer.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = SimpleBlocObserver();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final _navigatorKey = GlobalKey<NavigatorState>();
+
+  NavigatorState get _navigator => _navigatorKey.currentState!;
+
+  final StorageService _storageService = StorageService();
+
+  MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -50,13 +56,14 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => AuthBloc(
               authRepositories: context.read<AuthRepositories>(),
-              storageService: StorageService(),
+              storageService: _storageService,
               userRepository: context.read<UserRepository>(),
             ),
           ),
           BlocProvider(
             create: (context) => LoginBloc(
               authRepositories: context.read<AuthRepositories>(),
+              storageService: _storageService,
               authBloc: context.read<AuthBloc>(),
             ),
           ),
@@ -88,26 +95,29 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
+          navigatorKey: _navigatorKey,
           title: 'Terafty Flutter',
           theme: theme(),
           onGenerateRoute: AppRouter.onGenerateRoute,
-          home: BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              if (state is AuthAuthenticated) {
-                return const HomeScreen();
+          builder: (context, child) => BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              print(state.status);
+              switch (state.status) {
+                case AuthenticationStatus.authenticated:
+                  _navigator.pushNamedAndRemoveUntil(
+                      HomeScreen.routeName, (route) => false);
+                  break;
+                case AuthenticationStatus.unauthenticated:
+                  _navigator.pushNamedAndRemoveUntil<void>(
+                    LoginMainScreen.routeName,
+                    (route) => false,
+                  );
+                  break;
+                case AuthenticationStatus.unknown:
+                  break;
               }
-              if (state is AuthUnAuthenticated) {
-                return const LoginMainScreen();
-              }
-              if (state is AuthLoading) {
-                return const Center(
-                  child: CircularProgressIndicator.adaptive(),
-                );
-              }
-              return const Center(
-                child: CircularProgressIndicator.adaptive(),
-              );
             },
+            child: child,
           ),
         ),
       ),

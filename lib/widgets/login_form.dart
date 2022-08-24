@@ -27,7 +27,7 @@ class LoginForm extends StatelessWidget {
             ),
           );
         } catch (e) {
-          print(e.toString());
+          debugPrint(e.toString());
         }
       }
     }
@@ -37,7 +37,8 @@ class LoginForm extends StatelessWidget {
       child: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoginSuccess) {
-            Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
+            Navigator.pushNamedAndRemoveUntil(
+                context, HomeScreen.routeName, (route) => false);
           }
           if (state is LoginFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -62,7 +63,8 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
               validator: FormBuilderValidators.compose([
-                FormBuilderValidators.email(errorText: 'Please input valid email'),
+                FormBuilderValidators.email(
+                    errorText: 'Please input valid email'),
                 FormBuilderValidators.required(errorText: 'Email is required'),
               ]),
               keyboardType: TextInputType.emailAddress,
@@ -80,7 +82,8 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
               validator: FormBuilderValidators.compose([
-                FormBuilderValidators.required(errorText: 'Password is required'),
+                FormBuilderValidators.required(
+                    errorText: 'Password is required'),
               ]),
               keyboardType: TextInputType.visiblePassword,
               obscureText: true,

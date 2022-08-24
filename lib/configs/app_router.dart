@@ -6,6 +6,7 @@ import 'package:terafty_flutter/screens/boarding/boarding_screen.dart';
 import 'package:terafty_flutter/screens/home/home_screen.dart';
 import 'package:terafty_flutter/screens/movie/movie_detail_screen.dart';
 import 'package:terafty_flutter/screens/movie/streaming_play_screen.dart';
+import 'package:terafty_flutter/widgets/loading_screen.dart';
 
 class AppRouter {
   static Route onGenerateRoute(RouteSettings settings) {
@@ -15,6 +16,8 @@ class AppRouter {
     }
     switch (settings.name) {
       case '/':
+        return LoadingScreen.route();
+      case BoardingScreen.routeName:
         return BoardingScreen.route();
       case LoginMainScreen.routeName:
         return LoginMainScreen.route();

@@ -31,7 +31,8 @@ class MovieDetailScreen extends StatefulWidget {
   State<MovieDetailScreen> createState() => _MovieDetailScreenState();
 }
 
-class _MovieDetailScreenState extends State<MovieDetailScreen> with SingleTickerProviderStateMixin {
+class _MovieDetailScreenState extends State<MovieDetailScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int selectedTab = 0;
   int selectedEpisode = 0;
@@ -166,20 +167,26 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> with SingleTicker
                               children: [
                                 Text(
                                   streaming.categoryGenre.nameKr,
-                                  style:
-                                      Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .copyWith(fontSize: 12),
                                 ),
                                 _verticalLine(),
                                 Text(
                                   '시즌 ${streaming.quantitySeason}개',
-                                  style:
-                                      Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .copyWith(fontSize: 12),
                                 ),
                                 _verticalLine(),
                                 Text(
                                   '에피소드 ${streaming.quantityEpisodes}개',
-                                  style:
-                                      Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .copyWith(fontSize: 12),
                                 ),
                               ],
                             ),
@@ -265,7 +272,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> with SingleTicker
                             Builder(
                               builder: (_) {
                                 return ConstrainedBox(
-                                  constraints: BoxConstraints(minHeight: size.height * 0.5),
+                                  constraints: BoxConstraints(
+                                      minHeight: size.height * 0.5),
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
                                       if (selectedTab == 0) {
@@ -281,7 +289,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> with SingleTicker
                                           streamingRepository: streamRepo,
                                           streamingID: streaming.id,
                                           seasonID:
-                                              BlocProvider.of<StreamingBloc>(context).seasonID,
+                                              BlocProvider.of<StreamingBloc>(
+                                                      context)
+                                                  .seasonID,
                                         ); //2nd tabView
                                       } else {
                                         return Tab3(
@@ -289,7 +299,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> with SingleTicker
                                           streamingRepository: streamRepo,
                                           streamingId: streaming.id,
                                           seasonId:
-                                              BlocProvider.of<StreamingBloc>(context).seasonID,
+                                              BlocProvider.of<StreamingBloc>(
+                                                      context)
+                                                  .seasonID,
                                         ); //3rd tabView
                                       }
                                     },
@@ -369,7 +381,8 @@ class _Tab3State extends State<Tab3> {
             }
             if (snapshot.hasData) {
               final List? episode = snapshot.data;
-              if (_initialEpisode == '' && _initialEpisode != episode![0]['_id']) {
+              if (_initialEpisode == '' &&
+                  _initialEpisode != episode![0]['_id']) {
                 _initialEpisode = episode[0]['_id'];
                 BlocProvider.of<VoteBloc>(context).add(
                   LoadVoteByEpisode(
@@ -394,7 +407,8 @@ class _Tab3State extends State<Tab3> {
                       color: Color(0xFFBDC5CB),
                     ),
                   ),
-                  constraints: BoxConstraints.tightFor(height: widget.size.height * 0.06),
+                  constraints: BoxConstraints.tightFor(
+                      height: widget.size.height * 0.06),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                   ),
@@ -447,7 +461,8 @@ class _Tab3State extends State<Tab3> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                constraints: BoxConstraints.tightFor(height: widget.size.height * 0.06),
+                constraints:
+                    BoxConstraints.tightFor(height: widget.size.height * 0.06),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                 ),
@@ -484,7 +499,10 @@ class _Tab3State extends State<Tab3> {
                             value: e,
                             child: Text(
                               e,
-                              style: Theme.of(context).textTheme.headline6!.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(
                                     color: const Color(0xFFBDC5CB),
                                   ),
                             ),
@@ -500,7 +518,7 @@ class _Tab3State extends State<Tab3> {
                 ),
               ],
             ),
-            const CommentList()
+            const CommentList(),
           ],
         )
       ],
@@ -562,7 +580,10 @@ class CommentList extends StatelessWidget {
                       children: [
                         Text(
                           '20 minutes ago',
-                          style: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6!
+                              .copyWith(fontSize: 12),
                         ),
                         const SizedBox(width: 32),
                         TextButton.icon(
@@ -572,13 +593,19 @@ class CommentList extends StatelessWidget {
                           ),
                           label: Text(
                             '12',
-                            style: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6!
+                                .copyWith(fontSize: 12),
                           ),
                         ),
                         const SizedBox(width: 32),
                         Text(
                           'Reply',
-                          style: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6!
+                              .copyWith(fontSize: 12),
                         )
                       ],
                     )
@@ -625,7 +652,8 @@ class VoteSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ConstrainedBox(
-                constraints: BoxConstraints.tightFor(width: widget.size.width * 0.8),
+                constraints:
+                    BoxConstraints.tightFor(width: widget.size.width * 0.8),
                 child: Text(
                   data.vote.titleKr,
                   style: Theme.of(context).textTheme.headline3,
@@ -938,7 +966,8 @@ class _Tab1State extends State<Tab1> {
     return Column(
       children: [
         FutureBuilder(
-          future: widget.streamingRepository.getAllSeasonByStreamID(widget.streamID),
+          future: widget.streamingRepository
+              .getAllSeasonByStreamID(widget.streamID),
           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -949,7 +978,8 @@ class _Tab1State extends State<Tab1> {
               final List<dynamic> listSeason = snapshot.data!;
               _mySelection = listSeason[0]['_id'];
               BlocProvider.of<EpisodeBloc>(context).add(
-                LoadEpisodeBySeasonID(seasonID: _mySelection, streamID: widget.streamID),
+                LoadEpisodeBySeasonID(
+                    seasonID: _mySelection, streamID: widget.streamID),
               );
               BlocProvider.of<StreamingBloc>(context).add(
                 UpdateSeasonID(seasonID: _mySelection),
@@ -963,7 +993,8 @@ class _Tab1State extends State<Tab1> {
                       color: Color(0xFFBDC5CB),
                     ),
                   ),
-                  constraints: BoxConstraints.tightFor(height: widget.size.height * 0.06),
+                  constraints: BoxConstraints.tightFor(
+                      height: widget.size.height * 0.06),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                   ),
@@ -992,7 +1023,8 @@ class _Tab1State extends State<Tab1> {
                   if (newValue != null) {
                     setState(() {
                       BlocProvider.of<EpisodeBloc>(context).add(
-                        LoadEpisodeBySeasonID(seasonID: newValue, streamID: widget.streamID),
+                        LoadEpisodeBySeasonID(
+                            seasonID: newValue, streamID: widget.streamID),
                       );
                       BlocProvider.of<StreamingBloc>(context).add(
                         UpdateSeasonID(seasonID: newValue),
@@ -1012,7 +1044,8 @@ class _Tab1State extends State<Tab1> {
                       color: Color(0xFFBDC5CB),
                     ),
                   ),
-                  constraints: BoxConstraints.tightFor(height: widget.size.height * 0.06),
+                  constraints: BoxConstraints.tightFor(
+                      height: widget.size.height * 0.06),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                   ),
@@ -1082,7 +1115,8 @@ class EpisodeList extends StatelessWidget {
                       alignment: Alignment.center,
                       children: [
                         CachedNetworkImage(
-                          imageUrl: episodes[index].thumbnailImageOverseaEpisodes,
+                          imageUrl:
+                              episodes[index].thumbnailImageOverseaEpisodes,
                           placeholder: (context, url) => const SizedBox(
                             height: 84,
                             width: 144,
@@ -1127,7 +1161,10 @@ class EpisodeList extends StatelessWidget {
                             episodes[index].storyEpisodeEng,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 12),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6!
+                                .copyWith(fontSize: 12),
                           ),
                         ],
                       ),

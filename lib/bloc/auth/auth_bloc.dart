@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:terafty_flutter/models/storage_item.dart';
 import 'package:terafty_flutter/models/user_model.dart';
 import 'package:terafty_flutter/repository/auth_repository.dart';
 import 'package:terafty_flutter/repository/user_repository.dart';
@@ -24,7 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   })  : _authRepositories = authRepositories,
         _storageService = storageService,
         _userRepository = userRepository,
-        super(AuthInitial()) {
+        super(const AuthState.unknown()) {
     // on<AppStarted>(_onAppStarted);
     // on<LoggedIn>(_onLoggedIn);
     on<LoggedOut>(_onLoggedOut);
@@ -47,18 +46,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     switch (event.status) {
       case AuthenticationStatus.unauthenticated:
-        return emit(
-            const AuthUnAuthenticated(AuthenticationStatus.unauthenticated));
+        return emit(const AuthState.unauthenticated());
       case AuthenticationStatus.authenticated:
-        final user = await _tryGetUser();
+        final String? accessToken =
+            await _storageService.readSecureData('access_token');
         return emit(
-          user != null
-              ? AuthAuthenticated(
-                  user: user, status: AuthenticationStatus.authenticated)
-              : const AuthUnAuthenticated(AuthenticationStatus.unauthenticated),
+          accessToken != ''
+              ? AuthState.authenticated(accessToken!)
+              : const AuthState.unauthenticated(),
         );
       case AuthenticationStatus.unknown:
-        return emit(AuthInitial());
+        return emit(const AuthState.unknown());
     }
   }
 

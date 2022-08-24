@@ -3,7 +3,7 @@ import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
 import 'package:terafty_flutter/screens/auth/login_main_screen.dart';
 
 class BoardingScreen extends StatelessWidget {
-  static const String routeName = '/';
+  static const String routeName = '/boarding';
 
   static Route route() {
     return MaterialPageRoute(
