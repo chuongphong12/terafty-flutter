@@ -549,18 +549,22 @@ class CommentList extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 25),
             itemBuilder: (context, index) {
               return ListTile(
-                leading: CachedNetworkImage(
-                  imageUrl: comments[index].userId.avatar,
-                  imageBuilder: (context, imageProvider) => CircleAvatar(
-                    backgroundImage: imageProvider,
-                  ),
-                  placeholder: (context, url) => const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
-                  errorWidget: (context, url, error) => const Center(
-                    child: Icon(
-                      Icons.error,
-                      color: Colors.red,
+                leading: SizedBox(
+                  height: 50,
+                  width: 50,
+                  child: CachedNetworkImage(
+                    imageUrl: comments[index].userId.avatar,
+                    imageBuilder: (context, imageProvider) => CircleAvatar(
+                      backgroundImage: imageProvider,
+                    ),
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
+                    errorWidget: (context, url, error) => const Center(
+                      child: Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      ),
                     ),
                   ),
                 ),

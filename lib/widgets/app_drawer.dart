@@ -36,7 +36,8 @@ class AppDrawer extends StatelessWidget {
               children: [
                 const CircleAvatar(
                   backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage('https://robohash.org/ttn?set=set4'),
+                  backgroundImage:
+                      NetworkImage('https://robohash.org/ttn?set=set4'),
                   radius: 35,
                 ),
                 const SizedBox(width: 12),
@@ -67,16 +68,27 @@ class AppDrawer extends StatelessWidget {
                   items[index],
                   style: Theme.of(context).textTheme.headline4,
                 ),
+                onTap: () {
+                  Navigator.pop(context);
+                },
               ),
               itemCount: items.length,
             ),
-            ElevatedButton(
-              onPressed: () {
+            const SizedBox(height: 200),
+            ListTile(
+              onTap: () {
                 BlocProvider.of<AuthBloc>(context).add(LoggedOut());
                 Navigator.pushNamedAndRemoveUntil(
                     context, LoginMainScreen.routeName, (route) => false);
               },
-              child: const Text('Logout'),
+              trailing: const Icon(
+                Icons.exit_to_app,
+                color: Colors.white,
+              ),
+              title: Text(
+                'Logout',
+                style: Theme.of(context).textTheme.headline4,
+              ),
             )
           ],
         ),

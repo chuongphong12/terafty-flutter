@@ -24,3 +24,7 @@ class LoginButtonPressed extends LoginEvent {
     return 'LoginButtonPressed { username: $email, password: $password }';
   }
 }
+
+class LoginKaKaoTalk extends LoginEvent {}
+
+class GoogleLogin extends LoginEvent {}

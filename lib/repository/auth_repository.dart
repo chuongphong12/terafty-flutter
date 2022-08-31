@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 import 'package:terafty_flutter/constants/api_constant.dart';
-import 'package:terafty_flutter/models/user_model.dart';
+import 'package:terafty_flutter/models/user_model.dart' as local_user;
 import 'package:terafty_flutter/services/storage_service.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
@@ -26,7 +27,7 @@ class AuthRepositories {
     required String email,
     required String password,
   }) async {
-    User? user;
+    local_user.User? appUser;
     try {
       Response response = await _dio.post('$baseURL/user/login', data: {
         'userEmail': email,
@@ -34,9 +35,9 @@ class AuthRepositories {
         'language': 'english',
         'typeDevice': 'app'
       });
-      User user = User.fromJson(response.data);
+      appUser = local_user.User.fromJson(response.data);
       if (response.statusCode == 200) {
-        return user.data.token;
+        return appUser.data.token;
       } else {
         throw Exception('Failed to login');
       }
@@ -52,8 +53,16 @@ class AuthRepositories {
     }
   }
 
-  void logOut() {
+  void logOut() async {
     _controller.add(AuthenticationStatus.unauthenticated);
+    if (await AuthApi.instance.hasToken()) {
+      try {
+        await UserApi.instance.logout();
+        await UserApi.instance.unlink();
+      } catch (e) {
+        print('Logout or Unlink fails.');
+      }
+    }
   }
 
   void dispose() => _controller.close();

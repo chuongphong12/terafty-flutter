@@ -1,5 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 import 'package:terafty_flutter/bloc/auth/auth_bloc.dart';
 import 'package:terafty_flutter/bloc/comment/comment_bloc.dart';
 import 'package:terafty_flutter/bloc/episode/episode_bloc.dart';
@@ -18,8 +20,14 @@ import 'package:terafty_flutter/screens/home/home_screen.dart';
 import 'package:terafty_flutter/services/storage_service.dart';
 import 'package:terafty_flutter/simple_bloc_observer.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  KakaoSdk.init(nativeAppKey: 'b8f46568d46c50b258ba91a44b0bc222');
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   Bloc.observer = SimpleBlocObserver();
   runApp(MyApp());
 }
@@ -101,7 +109,6 @@ class MyApp extends StatelessWidget {
           onGenerateRoute: AppRouter.onGenerateRoute,
           builder: (context, child) => BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
-              print(state.status);
               switch (state.status) {
                 case AuthenticationStatus.authenticated:
                   _navigator.pushNamedAndRemoveUntil(

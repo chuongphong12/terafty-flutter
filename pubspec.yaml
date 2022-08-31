@@ -52,6 +52,11 @@ dependencies:
   youtube_player_flutter: ^8.1.0
   intl: ^0.17.0
   kakao_flutter_sdk: ^1.2.1
+  kakao_flutter_sdk_user: ^1.2.1
+  kakao_flutter_sdk_auth: ^1.2.1
+  firebase_core: ^1.21.1
+  firebase_auth: ^3.7.0
+  google_sign_in: ^5.4.1
 
 dev_dependencies:
   flutter_test:

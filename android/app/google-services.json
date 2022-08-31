@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "944814235003",
+    "project_id": "terafty-authenticate",
+    "storage_bucket": "terafty-authenticate.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:944814235003:android:dd1959bb56a0ff6aa0b1de",
+        "android_client_info": {
+          "package_name": "com.example.terafty_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "944814235003-g71f5kuamqcsnc3b1kl33j7vcso6r7qc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCy4DdJGJvcb8vP0n_7Fr4HY7EDGs73uBQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "944814235003-g71f5kuamqcsnc3b1kl33j7vcso6r7qc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

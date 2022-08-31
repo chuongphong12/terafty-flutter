@@ -1,5 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:terafty_flutter/bloc/login/login_bloc.dart';
 import 'package:terafty_flutter/extensions/hexadecimal_convert.dart';
 import 'package:terafty_flutter/screens/auth/login_email_screen.dart';
 
@@ -38,7 +40,9 @@ class LoginMainScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    BlocProvider.of<LoginBloc>(context).add(GoogleLogin());
+                  },
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size(width * 0.9, 60),
                     primary: Colors.white,
@@ -49,12 +53,17 @@ class LoginMainScreen extends StatelessWidget {
                   ),
                   label: Text(
                     'Google로 계속하기',
-                    style: Theme.of(context).textTheme.headline4,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline4!
+                        .copyWith(color: Colors.black),
                   ),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    BlocProvider.of<LoginBloc>(context).add(LoginKaKaoTalk());
+                  },
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size(width * 0.9, 60),
                     primary: HexColor.fromHex('#FFCA42'),
@@ -65,7 +74,10 @@ class LoginMainScreen extends StatelessWidget {
                   ),
                   label: Text(
                     '카카오로 계속하기',
-                    style: Theme.of(context).textTheme.headline4,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline4!
+                        .copyWith(color: const Color(0xFF3C1E1E)),
                   ),
                 ),
                 const SizedBox(height: 8),
